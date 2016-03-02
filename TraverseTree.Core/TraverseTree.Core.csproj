@@ -37,14 +37,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstract\INode.cs" />
+    <Compile Include="Extensions\BinarySearchTreeExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Models\BinaryTree.cs" />
     <Compile Include="Models\BinaryTreeVisitor.cs" />
     <Compile Include="Models\Comparer.cs" />
     <Compile Include="Models\BinaryTreeNode.cs" />
-    <Compile Include="Models\IBinaryTreeVisitor.cs" />
+    <Compile Include="Abstract\IBinaryTreeVisitor.cs" />
     <Compile Include="Models\Node.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

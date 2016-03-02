@@ -13,26 +13,26 @@ namespace TraverseTree.Core.Models
 	/// </summary>
 	/// <typeparam name="TKey">Key for search, must be Comparable: <see cref="IComparable{TKey}"/></typeparam>
 	/// <typeparam name="TValue">Value for key, must be new()</typeparam>
-	public class BinaryTree<TKey, TValue> : IDictionary<TKey, TValue> 
+	public class BinaryTree<TKey, TValue> : ICollection<KeyValuePair<TKey, TValue>> 
 		where TKey : IComparable<TKey> 
 	{
 		/// <summary>
-		/// 
+		/// Represents the root of BST
 		/// </summary>
 		public BinaryTreeNode<TKey, TValue> Root { get; private set; }
 
 		/// <summary>
-		/// 
+		/// Gets the number of elements contained in the collection
 		/// </summary>
 		public int Count { get; private set; }
 
 		/// <summary>
-		/// 
+		/// Indicates, if the collection is readonly
 		/// </summary>
 		public bool IsReadOnly => false;
 
 		/// <summary>
-		/// Determine if BST is empty
+		/// Determine, if BST is empty
 		/// </summary>
 		/// <returns>False if root node is null. Otherwise true</returns>
 		public bool IsEmpty =>
@@ -81,24 +81,6 @@ namespace TraverseTree.Core.Models
 		}
 
 		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="key"></param>
-		/// <returns></returns>
-		public TValue this[TKey key]
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-
-			set
-			{
-				throw new NotImplementedException();
-			}
-		}
-
-		/// <summary>
 		/// Create empty instance of BST
 		/// </summary>
 		public BinaryTree() { }
@@ -135,11 +117,6 @@ namespace TraverseTree.Core.Models
 		}
 
 		public bool Contains(KeyValuePair<TKey, TValue> item)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool TryGetValue(TKey key, out TValue value)
 		{
 			throw new NotImplementedException();
 		}
@@ -185,12 +162,22 @@ namespace TraverseTree.Core.Models
 		public void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> pairs) =>
 			pairs.Each(x => Add(x.Key, x.Value));
 
+		public void Find (TKey key)
+		{
+			throw new NotImplementedException();
+		}
+
 		public bool Remove(TKey key)
 		{
 			throw new NotImplementedException();
 		}
 
 		public bool Remove(KeyValuePair<TKey, TValue> item)
+		{
+			throw new NotImplementedException();
+		}
+
+		public bool RemoveAll (KeyValuePair<TKey, TValue> item)
 		{
 			throw new NotImplementedException();
 		}
