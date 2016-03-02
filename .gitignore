@@ -1,0 +1,7 @@
+TestResults/
+TraverseTree.Core/bin/
+TraverseTree.Core/obj/
+TraverseTree.UnitTest/bin/
+TraverseTree.UnitTest/obj/
+TraverseTree.Visual/bin/
+TraverseTree.Visual/obj/
