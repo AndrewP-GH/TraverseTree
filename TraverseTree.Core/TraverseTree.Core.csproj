@@ -38,11 +38,10 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\INode.cs" />
-    <Compile Include="Extensions\BinarySearchTreeExtensions.cs" />
+    <Compile Include="Extensions\BinaryTreeNodeExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Models\BinaryTree.cs" />
     <Compile Include="Models\BinaryTreeVisitor.cs" />
-    <Compile Include="Models\Comparer.cs" />
     <Compile Include="Models\BinaryTreeNode.cs" />
     <Compile Include="Abstract\IBinaryTreeVisitor.cs" />
     <Compile Include="Models\Node.cs" />

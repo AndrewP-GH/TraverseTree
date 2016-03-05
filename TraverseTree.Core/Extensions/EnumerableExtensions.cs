@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace TraverseTree.Core.Extensions
 {
-	internal static class EnumerableExtensions
+	public static class EnumerableExtensions
 	{
 		public static IEnumerable<T> Each<T>(this IEnumerable<T> source, Action<T> action)
 		{
@@ -12,6 +12,20 @@ namespace TraverseTree.Core.Extensions
 				action(item);
 			}
 			return source;
+		}
+	}
+
+	internal static class ListExtenssions
+	{
+		public static IList<TDest> Transform<TSource, TDest> (this IList<TSource> list, Func<TSource, TDest> transform)
+		{
+			IList<TDest> result = new List<TDest>();
+
+			for (int i = 0; i < list.Count; i++)
+			{
+				result.Add(transform(list[i]));
+			}
+			return result;
 		}
 	}
 }

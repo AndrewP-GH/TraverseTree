@@ -31,8 +31,9 @@ namespace TraverseTree.Core.Models
 		/// <param name="data"></param>
 		public Node(T data)
 		{
-			if (data == null)
+			if (data == null) { 
 				throw new ArgumentNullException(nameof(data));
+			}
 
 			Value = data;
 		}

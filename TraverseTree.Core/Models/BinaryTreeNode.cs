@@ -14,12 +14,10 @@ namespace TraverseTree.Core.Models
 	/// <typeparam name="TValue"></typeparam>
 	public class BinaryTreeNode<TKey, TValue> : Node<TValue>
 	{
-		private readonly TKey _key;
-
 		/// <summary>
 		/// 
 		/// </summary>
-		public TKey Key => _key;
+		public TKey Key { get; private set; }
 
 		/// <summary>
 		/// 
@@ -36,21 +34,22 @@ namespace TraverseTree.Core.Models
 		/// </summary>
 		public BinaryTreeNode<TKey, TValue> Parent { get; set; }
 
-		public bool HasInnerNodes =>
-			( Left != null ) || ( Right != null );
+		public bool IsLeaf =>
+			Object.ReferenceEquals(Left, null) && Object.ReferenceEquals(Right, null);
 
 		/// <summary>
 		/// 
 		/// </summary>
-		/// <exception cref="ArgumentNullException" />
 		public BinaryTreeNode<TKey, TValue> Minimum
 		{
 			get
 			{
 				BinaryTreeNode<TKey, TValue> current = this;
 
-				while(current.Left != null)
+				while (!Object.ReferenceEquals(current.Left, null))
+				{
 					current = current.Left;
+				}
 				return current;
 			}
 		}
@@ -64,8 +63,10 @@ namespace TraverseTree.Core.Models
 			{
 				BinaryTreeNode<TKey, TValue> current = this;
 
-				while (current.Right != null)
+				while (!Object.ReferenceEquals(current.Right, null))
+				{
 					current = current.Right;
+				}
 				return current;
 			}
 		}
@@ -77,12 +78,16 @@ namespace TraverseTree.Core.Models
 		{
 			get
 			{
-				if (Right != null)
+				if (!Object.ReferenceEquals(Right, null)) {
 					return Right.Minimum;
+				}
 
 				BinaryTreeNode<TKey, TValue> current = this;
-				while (current.Parent != null && current != current.Parent.Right)
+				while (!Object.ReferenceEquals(current.Parent, null) && 
+					Object.ReferenceEquals(current, current.Parent.Right))
+				{
 					current = current.Right;
+				}
 
 				return current;
 			}
@@ -95,12 +100,16 @@ namespace TraverseTree.Core.Models
 		{
 			get
 			{
-				if (Left != null)
+				if (!Object.ReferenceEquals(Left, null)) { 
 					return Left.Maximum;
+				}
 
 				BinaryTreeNode<TKey, TValue> current = this;
-				while (current.Parent != null && current != current.Parent.Left)
+				while (!Object.ReferenceEquals(current.Parent, null) && 
+					Object.ReferenceEquals(current, current.Parent.Left))
+				{
 					current = current.Right;
+				}
 
 				return current;
 			}
@@ -122,8 +131,8 @@ namespace TraverseTree.Core.Models
 		/// </summary>
 		/// <param name="key"></param>
 		/// <param name="data"></param>
-		public BinaryTreeNode(TKey key, TValue data) :
-			this(key, data, null, null, null) { }
+		public BinaryTreeNode(TKey key, TValue value) :
+			this(key, value, null, null, null) { }
 
 		/// <summary>
 		/// 
@@ -132,8 +141,8 @@ namespace TraverseTree.Core.Models
 		/// <param name="data"></param>
 		/// <param name="left"></param>
 		/// <param name="right"></param>
-		public BinaryTreeNode(TKey key, TValue data, BinaryTreeNode<TKey, TValue> left, BinaryTreeNode<TKey, TValue> right) : 
-			this(key, data, left, right, null) { }
+		public BinaryTreeNode(TKey key, TValue value, BinaryTreeNode<TKey, TValue> left, BinaryTreeNode<TKey, TValue> right) : 
+			this(key, value, left, right, null) { }
 
 		/// <summary>
 		/// 
@@ -143,21 +152,39 @@ namespace TraverseTree.Core.Models
 		/// <param name="left"></param>
 		/// <param name="right"></param>
 		/// <param name="parent"></param>
-		public BinaryTreeNode(TKey key, TValue data, BinaryTreeNode<TKey, TValue> left, BinaryTreeNode<TKey, TValue> right, BinaryTreeNode<TKey, TValue> parent) : base(data)
+		public BinaryTreeNode(TKey key, TValue value, BinaryTreeNode<TKey, TValue> left, BinaryTreeNode<TKey, TValue> right, BinaryTreeNode<TKey, TValue> parent) : base(value)
 		{
-			_key = key;
+			if (Object.ReferenceEquals(key, null)) {
+				throw new ArgumentNullException(nameof(key));
+			}
+
+			if (Object.ReferenceEquals(value, null)) {
+				throw new ArgumentNullException(nameof(value));
+			}
+
+			Key = key;
+			Value = value;
 			Left = left;
 			Right = right;
 			Parent = parent;
 		}
 
-		public override string ToString()
+		/// <summary>
+		/// 
+		/// </summary>
+		public void Detach ()
 		{
-			if (Object.ReferenceEquals(this, null))
-				return "Empty";
-
-			return String.Format("Left : {0}\nCurrent: {1}\nRight : {2}", Left, Value, Right);
+			Left = null;
+			Right = null;
+			Parent = null;
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public override string ToString() =>
+			String.Format("Key: {0} Value: {1}", Key, Value);
 
 		/// <summary>
 		/// 
