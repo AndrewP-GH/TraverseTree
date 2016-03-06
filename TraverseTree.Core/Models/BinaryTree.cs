@@ -246,8 +246,25 @@ namespace TraverseTree.Core.Models
 			Count = 0;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="array"></param>
+		/// <param name="arrayIndex"></param>
 		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
 		{
+			if (array.IsNull()) {
+				throw new ArgumentNullException(nameof(array));
+			}
+
+			if (arrayIndex < 0) {
+				throw new ArgumentOutOfRangeException(nameof(arrayIndex));
+			}
+
+			if (array.Length - arrayIndex < Count) {
+				throw new ArgumentException("Invalid index");
+			}
+
 			throw new NotImplementedException();
 		}
 

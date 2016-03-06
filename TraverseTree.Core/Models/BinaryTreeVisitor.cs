@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TraverseTree.Core.Abstract;
+using TraverseTree.Core.Extensions;
 
 namespace TraverseTree.Core.Models
 {
@@ -108,4 +110,57 @@ namespace TraverseTree.Core.Models
 	//	}
 	//	#endregion
 	//}
+
+	public abstract class BinaryTreeNodeVisitorBase<TKey, TValue> : IBinaryTreeNodeVisitor<TKey, TValue>
+	{
+		public TraverseMode TraverseMode { get; set; }
+
+		public IEnumerable<KeyValuePair<TKey, TValue>> VisitTree(BinaryTreeNode<TKey, TValue> root)
+		{
+			if (root.IsNull()) {
+				throw new ArgumentNullException(nameof(root));
+			}
+
+			return Implementation()(root);
+		}
+
+		protected BinaryTreeNodeVisitorBase() { }
+
+		protected Func<BinaryTreeNode<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>> Implementation ()
+		{
+			if (TraverseMode == TraverseMode.Preorder)
+				return new Func<BinaryTreeNode<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>>(PreorderVisit);
+			else if (TraverseMode == TraverseMode.Inorder)
+				return new Func<BinaryTreeNode<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>>(InorderVisit);
+
+			return new Func<BinaryTreeNode<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>>(PostorderVisit);
+		}
+
+		protected abstract IEnumerable<KeyValuePair<TKey, TValue>> PreorderVisit(BinaryTreeNode<TKey, TValue> root);
+		protected abstract IEnumerable<KeyValuePair<TKey, TValue>> InorderVisit(BinaryTreeNode<TKey, TValue> root);
+		protected abstract IEnumerable<KeyValuePair<TKey, TValue>> PostorderVisit(BinaryTreeNode<TKey, TValue> root);
+	}
+
+	public class IterativeBinaryTreeNodeVisitor<TKey, TValue> : BinaryTreeNodeVisitorBase<TKey, TValue>
+	{
+		public IterativeBinaryTreeNodeVisitor(TraverseMode mode)
+		{
+			TraverseMode = mode;
+		}
+
+		protected override IEnumerable<KeyValuePair<TKey, TValue>> InorderVisit(BinaryTreeNode<TKey, TValue> root)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override IEnumerable<KeyValuePair<TKey, TValue>> PostorderVisit(BinaryTreeNode<TKey, TValue> root)
+		{
+			throw new NotImplementedException();
+		}
+
+		protected override IEnumerable<KeyValuePair<TKey, TValue>> PreorderVisit(BinaryTreeNode<TKey, TValue> root)
+		{
+			throw new NotImplementedException();
+		}
+	}
 }

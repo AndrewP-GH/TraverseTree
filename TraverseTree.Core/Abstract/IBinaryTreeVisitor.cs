@@ -6,38 +6,44 @@ namespace TraverseTree.Core.Abstract
 {
 	/// <summary>
 	/// Define traverse mode.
-	/// In case of Inorder : left node, current, right node.
-	/// In case of Postorder: left node, right node, current node.
-	/// In case of Preorder: current node, left node, right node.
 	/// </summary>
 	public enum TraverseMode
 	{
-		InOrder,
-		PostOrder,
-		PreOrder
+		/// <summary>
+		/// Visit at first current node, than left node and right node.
+		/// </summary>
+		Preorder,
+
+		/// <summary>
+		/// Visit at first left node, than current node and right node.
+		/// </summary>
+		Inorder,
+
+		/// <summary>
+		/// Visit at first left node, than right node and current node.
+		/// </summary>
+		Postorder
 	}
 
 	/// <summary>
 	/// Basic traverse functionality for binary tree
 	/// </summary>
-	/// <typeparam name="TKey">Key parameter for binary tree <see cref="BinaryTree{TKey, TValue}"/></typeparam>
-	/// <typeparam name="TValue">Value parameter for binary tree <see cref="BinaryTree{TKey, TValue}"/></typeparam>
-	public interface IBinaryTreeVisitor<TKey, TValue> where TKey : IComparable<TKey>
+	/// <typeparam name="TKey">Key parameter for binary tree <see cref="IComparable{TKey}"/></typeparam>
+	/// <typeparam name="TValue">Value parameter for binary tree</typeparam>
+	public interface IBinaryTreeNodeVisitor<TKey, TValue>
 	{
 		/// <summary>
-		/// Visit each node and perform action <see cref="Action{TKey}"/>
+		/// Get's or set's traverse mode <see cref="Abstract.TraverseMode"/>
 		/// </summary>
-		/// <param name="tree">Binary tree to visit</param>
-		/// <param name="action">Action to perform on each node</param>
-		void Visit(BinaryTree<TKey, TValue> tree, Action<BinaryTreeNode<TKey, TValue>> action);
+		TraverseMode TraverseMode { get; set; }
 
 		/// <summary>
-		/// Visit each node and perform action that return some value <see cref="Func{T, TResult}"/>
+		/// Visit each node of binary tree
 		/// </summary>
-		/// <typeparam name="TDest">Desctination parameter</typeparam>
-		/// <param name="tree">Binary tree to visit</param>
-		/// <param name="action">Action to perform</param>
-		/// <returns>Aggregate result of action on each node: <see cref="IEnumerable{T}"/></returns>
-		IEnumerable<TDest> Visit<TDest>(BinaryTree<TKey, TValue> tree, Func<BinaryTreeNode<TKey, TValue>, TDest> action);
+		/// <param name="root">The root node</param>
+		/// <returns>
+		/// Retrun <see cref="IEnumerable{T}"/>
+		/// </returns>
+		IEnumerable<KeyValuePair<TKey, TValue>> VisitTree(BinaryTreeNode<TKey, TValue> root);
 	}
 }
