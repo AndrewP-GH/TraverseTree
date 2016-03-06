@@ -7,18 +7,18 @@ namespace TraverseTree.Core.Models
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public abstract class Node<T> : INode<T>
+	/// <typeparam name="TValue"></typeparam>
+	public abstract class Node<TValue> : INode<TValue>
 	{
 		/// <summary>
 		/// 
 		/// </summary>
-		public T Value { get; set; }
+		public TValue Value { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		public abstract IEnumerable<INode<T>> InnerNodes { get; }
+		public abstract IEnumerable<INode<TValue>> InnerNodes { get; }
 
 		/// <summary>
 		/// 
@@ -29,7 +29,7 @@ namespace TraverseTree.Core.Models
 		/// 
 		/// </summary>
 		/// <param name="data"></param>
-		public Node(T data)
+		public Node(TValue data)
 		{
 			if (data == null) { 
 				throw new ArgumentNullException(nameof(data));

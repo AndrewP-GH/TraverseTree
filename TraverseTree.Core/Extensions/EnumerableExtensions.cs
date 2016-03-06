@@ -28,4 +28,10 @@ namespace TraverseTree.Core.Extensions
 			return result;
 		}
 	}
+
+	internal static class GenericExtenssions
+	{
+		public static bool IsNull<T>(this T value) =>
+			EqualityComparer<T>.Default.Equals(value, default(T));
+	}
 }

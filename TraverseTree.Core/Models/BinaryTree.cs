@@ -37,8 +37,7 @@ namespace TraverseTree.Core.Models
 		/// Determine, if BST is empty
 		/// </summary>
 		/// <returns>False if root node is null. Otherwise true</returns>
-		public bool IsEmpty => 
-			Object.ReferenceEquals(Root, null);
+		public bool IsEmpty => Root.IsNull();
 
 		/// <summary>
 		/// 
@@ -53,7 +52,7 @@ namespace TraverseTree.Core.Models
 			}
 			set
 			{
-				if (Object.ReferenceEquals(value, null)) { 
+				if (value.IsNull()) { 
 					throw new ArgumentNullException(nameof(value));
 				}
 
@@ -74,7 +73,7 @@ namespace TraverseTree.Core.Models
 			}
 			set
 			{
-				if (Object.ReferenceEquals(value, null)) {
+				if (value.IsNull()) {
 					throw new ArgumentNullException(nameof(value));
 				}
 
@@ -137,44 +136,41 @@ namespace TraverseTree.Core.Models
 		}
 
 		public bool ContainsKey(TKey key) =>
-			Find(key, TruePredicate).Count > 0;
+			FindOrRemoveAllInternal(key, SearchingMode.SearchByKey).Count > 0;
 
 		public bool Contains(TKey key, TValue value) =>
-			Find(key, x => ValueComparer.Equals(value, x)).Count > 0;
+			FindOrRemoveAllInternal(key, SearchingMode.SearchByKeyAndValue, value).Count > 0;
 
 		public bool Contains(KeyValuePair<TKey, TValue> item) =>
 			Contains(item.Key, item.Value);
 
 		public void Add(TKey key, TValue value)
 		{
-			BinaryTreeNode<TKey, TValue> parent = null;
-			BinaryTreeNode<TKey, TValue> current = Root;
-			BinaryTreeNode<TKey, TValue> node = new BinaryTreeNode<TKey, TValue>(key, value);
+			BinaryTreeNode<TKey, TValue> createdNode = new BinaryTreeNode<TKey, TValue>(key, value);
+			BinaryTreeNode<TKey, TValue> current = Root, parent = null;
 
-			while (!Object.ReferenceEquals(current, null))
+			while (!current.IsNull())
 			{
 				parent = current;
 
-				if (node.LessThan(current, KeyComparer)) {
+				if (createdNode.LessThan(current)) {
 					current = current.Left;
-				}
-				else {
+				} else {
 					current = current.Right;
 				}
 			}
 
-			node.Parent = parent;
+			createdNode.Parent = parent;
 
-			if (Object.ReferenceEquals(parent, null)) {
-				Root = node;
+			if (parent.IsNull()) {
+				Root = createdNode;
 			}
-			else if (node.LessThan(parent, KeyComparer)) {
-				parent.Left = node;
+			else if (createdNode.LessThan(parent, KeyComparer)) {
+				parent.Left = createdNode;
 			}
 			else {
-				parent.Right = node;
+				parent.Right = createdNode;
 			}
-
 			Count++;
 		}
 
@@ -186,51 +182,68 @@ namespace TraverseTree.Core.Models
 
 		public IEnumerable<KeyValuePair<TKey, TValue>> Find(TKey key)
 		{
-			return Find(key, TruePredicate).
+			return FindOrRemoveAllInternal(key, SearchingMode.SearchByKey).
 				Transform(x => new KeyValuePair<TKey, TValue>(x.Key, x.Value));
 		}
 		
 		public IEnumerable<KeyValuePair<TKey, TValue>> Find(TKey key, TValue value)
 		{
-			return Find(key, x => ValueComparer.Equals(value, x)).
+			return FindOrRemoveAllInternal(key, SearchingMode.SearchByKeyAndValue, value).
 				Transform(x => new KeyValuePair<TKey, TValue>(x.Key, x.Value));
 		}
 
 		public IEnumerable<TValue> FindValues (TKey key)
 		{
-			IList<BinaryTreeNode<TKey, TValue>> searchResult = Find(key, TruePredicate);
+			IList<BinaryTreeNode<TKey, TValue>> searchResult = 
+				FindOrRemoveAllInternal(key, SearchingMode.SearchByKey);
 
 			if (searchResult.Count == 0) {
 				throw new KeyNotFoundException("Key not found in BST");
 			}
+
 			return searchResult.Transform(x => x.Value);
 		}
 
-		public bool RemoveAt (TKey key, bool removeAll = false)
+		/// <summary>
+		/// Remove all nodes by key
+		/// </summary>
+		/// <param name="key"></param>
+		public IEnumerable<TValue> RemoveAt (TKey key)
 		{
-			Remove(key, TruePredicate, removeAll);
-			return true;
-		}
+			IList<BinaryTreeNode<TKey, TValue>> removedNodes = 
+				FindOrRemoveAllInternal(key, SearchingMode.RemoveByKey);
 
-		public bool Remove(TKey key, TValue value)
-		{
-			throw new NotImplementedException();
-		}
+			if (removedNodes.Count == 0) {
+				throw new KeyNotFoundException("Key not found in BST");
+			}
 
+			return removedNodes.Transform(node => node.Value);
+		}
+		
+		/// <summary>
+		/// Remove all nodes by key and value
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		public bool Remove(TKey key, TValue value) =>
+			FindOrRemoveAllInternal(key, SearchingMode.RemoveByKeyAndValue, value).Count > 0;
+
+		/// <summary>
+		/// Remvoe all nodes by key and value
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
 		public bool Remove(KeyValuePair<TKey, TValue> item) =>
 			Remove(item.Key, item.Value);
 
-		public bool RemoveAll (TKey key, TValue value)
-		{
-			throw new NotImplementedException();
-		}
-
-		public bool RemoveAll(KeyValuePair<TKey, TValue> item) =>
-			RemoveAll(item.Key, item.Value);
-
+		/// <summary>
+		/// Remove all nodes from BST
+		/// </summary>
 		public void Clear()
 		{
-			throw new NotImplementedException();
+			Root = null;
+			Count = 0;
 		}
 
 		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
@@ -248,100 +261,207 @@ namespace TraverseTree.Core.Models
 			throw new NotImplementedException();
 		}
 
-		private List<BinaryTreeNode<TKey, TValue>> Find (TKey key, Predicate<TValue> valuePredicate)
+		#region Helper methods
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="mode"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		private List<BinaryTreeNode<TKey, TValue>> FindOrRemoveAllInternal (TKey key, SearchingMode mode, TValue value = default(TValue))
 		{
+			List<BinaryTreeNode<TKey, TValue>> nodes =
+				new List<BinaryTreeNode<TKey, TValue>>();
+
 			BinaryTreeNode<TKey, TValue> current = Root;
-			List<BinaryTreeNode<TKey, TValue>> nodes = new List<BinaryTreeNode<TKey, TValue>>();
-			
-			while(!Object.ReferenceEquals(current, null))
+
+			while (!current.IsNull())
 			{
-				int compareResult = KeyComparer.Compare(key, current.Key);
+				BinaryTreeNode<TKey, TValue> foundNode =
+					FindFromInternal(current, key, mode, value);
 
-				if (compareResult < 0) {
-					current = current.Left;
-				} 
-				else
+				if (!foundNode.IsNull())
 				{
-					if (compareResult == 0 && valuePredicate(current.Value)) {
-						nodes.Add(current);
-					}
+					nodes.Add(foundNode);
 
-					current = current.Right;
+					if (mode.HasFlag(SearchingMode.Remove)) {
+						current = ExcludeNodeInternal(foundNode);
+					} 
+					else {
+						current = foundNode.Right;
+					}
+					
+				} else {
+					current = foundNode;
 				}
 			}
 
 			return nodes;
 		}
 
-		private bool Remove(TKey key, Predicate<TValue> valuePredicate, bool removeAll)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="current"></param>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <param name="searchBy"></param>
+		/// <returns></returns>
+		private BinaryTreeNode<TKey, TValue> FindFromInternal(BinaryTreeNode<TKey, TValue> current, TKey key, SearchingMode mode, TValue value = default(TValue))
 		{
-			BinaryTreeNode<TKey, TValue> current = Root;
-
-			while (!Object.ReferenceEquals(current, null))
+			bool searchNext = true;
+			do
 			{
 				int compareResult = KeyComparer.Compare(key, current.Key);
 
-				if (compareResult < 0) {
+				if (compareResult < 0)
+				{
 					current = current.Left;
 				} else
 				{
-					if (compareResult == 0 && valuePredicate(current.Value))
+					if (compareResult == 0)
 					{
-						RemoveNode(current, Object.ReferenceEquals(current.Parent?.Left, current));
-						--Count;
+						searchNext = mode.HasFlag(SearchingMode.ByValue) ?
+							!ValueComparer.Equals(current.Value, value) : false;
 					}
 
-					current = current.Right;
+					if (searchNext) {
+						current = current.Right;
+					}
 				}
-			}
 
-			return true;
+			}
+			while (!current.IsNull() && searchNext);
+
+			return current;
 		}
 
-		private bool RemoveNode (BinaryTreeNode<TKey, TValue> node, bool left)
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="node"></param>
+		/// <param name="parent"></param>
+		private BinaryTreeNode<TKey, TValue> ExcludeNodeInternal(BinaryTreeNode<TKey, TValue> node)
 		{
-			if (node.IsLeaf) {
-				if (left) node.Parent.Left = null;
-				else node.Parent.Right = null;
-				node.Parent = null;
-				//next = null;
-			}
-			else if (Object.ReferenceEquals(node.Right, null)) {
-				if (left) node.Parent.Left = node.Left;
-				else node.Parent.Right = node.Left;
-				node.Parent = null;
+			BinaryTreeNode<TKey, TValue> next = null;
 
-				//next = node.Left;
-			} else if (Object.ReferenceEquals(node.Left, null)) {
-				if (left) node.Parent.Left = node.Right;
-				else node.Parent.Right = node.Right;
-				node.Parent = null;
-
-				//next = node.Right;
-			} else
+			if (node.IsLeaf)
 			{
+				// if node hasn't child, just remove it
+				node.Parent.DetachChild(node);
+			}
+			else if (node.HasLeftOnly)
+			{
+				// if node has only left child, then replace it:
+				// node -> parent -> (left || right) with node -> left
+
+				node.Parent.ReplaceChild(node, node.Left);
+				node.Left.Parent = node.Parent;
+				next = node.Left;
+			}
+			else if (node.HasRightOnly)
+			{
+				// if node has only right child, then replace it:
+				// node -> parent -> (left || right) with node -> right
+
+				node.Parent.ReplaceChild(node, node.Right);
+				node.Right.Parent = node.Parent;
+				next = node.Right;
+			}
+			else
+			{
+				// Otherwise, the worst case, when node contain two children
+				// Find the most left node in right subtree
 				BinaryTreeNode<TKey, TValue> minimum = node.Right.Minimum;
 
+				// detach founded node
 				minimum.Parent.Left = minimum.Right;
 
-				if (left)
+				if (!minimum.Right.IsNull())
 				{
-					minimum.Parent = node.Parent.Left;
-					node.Parent.Left = minimum;
+					minimum.Right.Parent = minimum.Parent;
+				}
+
+				// store left, right, and parent nodes of detached node
+				minimum.ChangeRelations(node);
+
+				// change parent of child nodes of detached node
+				node.SetParentForChildren(minimum);
+
+				// preserve terminal case, when removing the root of the tree
+				if (!node.Parent.IsNull())
+				{
+					// change child of parent in detached node
+					node.Parent.ReplaceChild(node, minimum);
 				} else
 				{
-					minimum.Parent = node.Parent.Right;
-					node.Parent.Right = minimum;
+					// change root of current BST
+					Root = minimum;
 				}
-				node.Parent = null;
 
-				minimum.Left = node.Left;
-				minimum.Right = node.Right;
+				next = minimum;
 			}
 
-			return true;
+			// remove node's relations for allowing node to be deleted with GC
+			node.Detach();
+			--Count;
+
+			// return next starting point for searching
+			return next;
 		}
 
-		private static readonly Predicate<TValue> TruePredicate = x => true;
+		#endregion
+
+		#region Helper enum
+
+		/// <summary>
+		/// Helper enum
+		/// </summary>
+		private enum SearchingMode : byte
+		{
+			/// <summary>
+			/// Remove or find by key
+			/// </summary>
+			ByKey = 0x08,
+
+			/// <summary>
+			/// Remove of find by value
+			/// </summary>
+			ByValue = 0x02,
+
+			/// <summary>
+			/// Find and remove node
+			/// </summary>
+			Remove = 0x80,
+
+			/// <summary>
+			/// Only find node
+			/// </summary>
+			Search = 0x20,
+
+			/// <summary>
+			/// Find node only by key
+			/// </summary>
+			SearchByKey = Search | ByKey,
+
+			/// <summary>
+			/// Find node by key and value
+			/// </summary>
+			SearchByKeyAndValue = Search | ByKey | ByValue,
+
+			/// <summary>
+			/// Remove node only by key
+			/// </summary>
+			RemoveByKey = Remove | ByKey,
+
+			/// <summary>
+			/// Remove node by key and value
+			/// </summary>
+			RemoveByKeyAndValue = Remove | ByKey | ByValue
+		}
+
+		#endregion
 	}
 }
