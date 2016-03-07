@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,159 +9,219 @@ using TraverseTree.Core.Extensions;
 
 namespace TraverseTree.Core.Models
 {
-	//public class BinaryTreeVisitor<T> : IBinaryTreeVisitor<T>, IEnumerator<T>
-	//{
-	//	private Func<BinaryTree<T>, IEnumerable<T>> _traverse;
-
-	//	private TraverseMode _traverseMode;
-	//	public TraverseMode TraverseMode
-	//	{
-	//		get
-	//		{
-	//			return _traverseMode;
-	//		}
-	//		set
-	//		{
-	//			if (_traverseMode == value) return;
-
-	//			_traverseMode = value;
-
-	//			_traverse = _traverseMode == TraverseMode.InOrder ? new Func<BinaryTree<T>, IEnumerable<T>>(InorderTraverse) :
-	//					  _traverseMode == TraverseMode.PostOrder ? new Func<BinaryTree<T>, IEnumerable<T>>(PostorderTraverse) :
-	//																new Func<BinaryTree<T>, IEnumerable<T>>(PreorderTraverse);
-	//		}
-	//	}
-
-	//	public T Current
-	//	{
-	//		get
-	//		{
-	//			throw new NotImplementedException();
-	//		}
-	//	}
-
-	//	object IEnumerator.Current
-	//	{
-	//		get
-	//		{
-	//			throw new NotImplementedException();
-	//		}
-	//	}
-
-	//	private BinaryTreeVisitor(TraverseMode mode)
-	//	{
-
-	//	}
-
-	//	public IEnumerable<T> Visit(BinaryTree<T> tree) => _traverse(tree);
-
-	//	private void TraverseAction()
-	//	{
-
-	//	}
-
-	//	private IEnumerable<T> InorderTraverse(BinaryTree<T> tree)
-	//	{
-
-	//	}
-	//	private IEnumerable<T> PostorderTraverse(BinaryTree<T> tree)
-	//	{
-
-	//	}
-	//	private IEnumerable<T> PreorderTraverse(BinaryTree<T> tree)
-	//	{
-
-	//	}
-
-	//	public bool MoveNext()
-	//	{
-	//		throw new NotImplementedException();
-	//	}
-
-	//	public void Reset()
-	//	{
-	//		throw new NotImplementedException();
-	//	}
-
-	//	#region IDisposable Support
-	//	private bool disposedValue = false; // To detect redundant calls
-
-	//	protected virtual void Dispose(bool disposing)
-	//	{
-	//		if (!disposedValue)
-	//		{
-	//			if (disposing)
-	//			{
-	//				// TODO: dispose managed state (managed objects).
-	//			}
-
-	//			// TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
-	//			// TODO: set large fields to null.
-
-	//			disposedValue = true;
-	//		}
-	//	}
-
-	//	public void Dispose()
-	//	{
-	//		// Do not change this code. Put cleanup code in Dispose(bool disposing) above.
-	//		Dispose(true);
-	//		// TODO: uncomment the following line if the finalizer is overridden above.
-	//		// GC.SuppressFinalize(this);
-	//	}
-	//	#endregion
-	//}
-
-	public abstract class BinaryTreeNodeVisitorBase<TKey, TValue> : IBinaryTreeNodeVisitor<TKey, TValue>
+	/// <summary>
+	/// 
+	/// </summary>
+	/// <typeparam name="TNode"></typeparam>
+	public class IterativeBinaryNodeVisitor<TNode> : IBinaryNodeVisitor<TNode> where TNode : class, IBinaryHierarchical<TNode>
 	{
+		public TNode StartNode => _start;
+
 		public TraverseMode TraverseMode { get; set; }
 
-		public IEnumerable<KeyValuePair<TKey, TValue>> VisitTree(BinaryTreeNode<TKey, TValue> root)
+		public IterativeBinaryNodeVisitor(TNode startNode) :
+			this(startNode, new Stack<TNode>(), TraverseMode.Inorder) { }
+
+		public IterativeBinaryNodeVisitor(TNode startNode, TraverseMode traverseMode) :
+			this(startNode, new Stack<TNode>(), traverseMode) { }
+
+		public IterativeBinaryNodeVisitor(TNode startNode, Stack<TNode> stack) :
+			this(startNode, stack, TraverseMode.Inorder) { }
+
+		public IterativeBinaryNodeVisitor(TNode startNode, Stack<TNode> stack, TraverseMode traverseMode)
 		{
-			if (root.IsNull()) {
-				throw new ArgumentNullException(nameof(root));
+			if (startNode.IsNull()) {
+				throw new ArgumentNullException(nameof(startNode));
 			}
 
-			return Implementation()(root);
+			if (stack.IsNull()) {
+				throw new ArgumentNullException(nameof(stack));
+			}
+
+			_start = startNode;
+			_stack = stack;
+			TraverseMode = traverseMode;
 		}
 
-		protected BinaryTreeNodeVisitorBase() { }
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-		protected Func<BinaryTreeNode<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>> Implementation ()
+		public IEnumerator<TNode> GetEnumerator()
 		{
-			if (TraverseMode == TraverseMode.Preorder)
-				return new Func<BinaryTreeNode<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>>(PreorderVisit);
-			else if (TraverseMode == TraverseMode.Inorder)
-				return new Func<BinaryTreeNode<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>>(InorderVisit);
-
-			return new Func<BinaryTreeNode<TKey, TValue>, IEnumerable<KeyValuePair<TKey, TValue>>>(PostorderVisit);
+			if (TraverseMode == TraverseMode.Inorder) {
+				return new InorderEnumerator(this);
+			} else if (TraverseMode == TraverseMode.Postorder) {
+				return new PostorderEnumerator(this);
+			}
+			
+			return new PreorderEnumerator(this);
 		}
 
-		protected abstract IEnumerable<KeyValuePair<TKey, TValue>> PreorderVisit(BinaryTreeNode<TKey, TValue> root);
-		protected abstract IEnumerable<KeyValuePair<TKey, TValue>> InorderVisit(BinaryTreeNode<TKey, TValue> root);
-		protected abstract IEnumerable<KeyValuePair<TKey, TValue>> PostorderVisit(BinaryTreeNode<TKey, TValue> root);
-	}
+		private readonly TNode _start;
+		private readonly Stack<TNode> _stack;
 
-	public class IterativeBinaryTreeNodeVisitor<TKey, TValue> : BinaryTreeNodeVisitorBase<TKey, TValue>
-	{
-		public IterativeBinaryTreeNodeVisitor(TraverseMode mode)
+		/// <summary>
+		/// 
+		/// </summary>
+		internal abstract class BaseEnumerator : IEnumerator<TNode>
 		{
-			TraverseMode = mode;
+			/// <summary>
+			/// 
+			/// </summary>
+			object IEnumerator.Current => Current;
+
+			/// <summary>
+			/// 
+			/// </summary>
+			public TNode Current => _current;
+
+			/// <summary>
+			/// 
+			/// </summary>
+			protected Stack<TNode> Stack => _holder._stack;
+
+			/// <summary>
+			/// 
+			/// </summary>
+			public virtual void Dispose()
+			{
+				Reset();
+				_holder = null;
+			}
+			
+			/// <summary>
+			/// 
+			/// </summary>
+			public virtual void Reset()
+			{
+				_current = null;
+				_pointer = _holder.StartNode;
+				Stack.Clear();
+			}
+
+			/// <summary>
+			/// Advanse enumerator in the next element to the collection
+			/// </summary>
+			/// <returns>
+			/// True if the enumerator was successfully advanced to the next element; 
+			/// false if the enumerator has passed the end of the collection.
+			/// </returns>
+			public bool MoveNext()
+			{
+				bool stop = ( !Stack.IsEmpty() || !_pointer.IsNull() );
+
+				if (stop) {
+					AdvanceNext();
+				} else {
+					Reset();
+				}
+
+				return stop;
+			}
+
+			/// <summary>
+			/// 
+			/// </summary>
+			/// <param name="holder"></param>
+			protected BaseEnumerator(IterativeBinaryNodeVisitor<TNode> holder)
+			{
+				_current = null;
+				_pointer = holder._start;
+				_holder = holder;
+			}
+
+			/// <summary>
+			/// Implement's in derived classes
+			/// </summary>
+			protected abstract void AdvanceNext();
+
+			protected TNode _current;
+			protected TNode _pointer;
+			protected IterativeBinaryNodeVisitor<TNode> _holder;
 		}
 
-		protected override IEnumerable<KeyValuePair<TKey, TValue>> InorderVisit(BinaryTreeNode<TKey, TValue> root)
+		/// <summary>
+		/// 
+		/// </summary>
+		internal class InorderEnumerator : BaseEnumerator
 		{
-			throw new NotImplementedException();
+			public InorderEnumerator(IterativeBinaryNodeVisitor<TNode> holder) : base(holder) { }
+
+			/// <summary>
+			/// Inorder traversal
+			/// </summary>
+			protected override void AdvanceNext()
+			{
+				if (!_pointer.IsNull())
+				{
+					while (!_pointer.IsNull())
+					{
+						Stack.Push(_pointer);
+						_pointer = _pointer.Left;
+					}
+				}
+
+				_pointer = Stack.Pop();
+				_current = _pointer;
+				_pointer = _pointer.Right;
+			}
 		}
 
-		protected override IEnumerable<KeyValuePair<TKey, TValue>> PostorderVisit(BinaryTreeNode<TKey, TValue> root)
+		/// <summary>
+		/// 
+		/// </summary>
+		internal class PreorderEnumerator : BaseEnumerator
 		{
-			throw new NotImplementedException();
+			public PreorderEnumerator(IterativeBinaryNodeVisitor<TNode> holder) : base(holder) { }
+
+			protected override void AdvanceNext()
+			{
+				if (_pointer.IsNull())
+				{
+					_pointer = Stack.Pop();
+				}
+
+				_current = _pointer;
+
+				if (!_pointer.Right.IsNull())
+				{
+					Stack.Push(_pointer.Right);
+				}
+
+				_pointer = _pointer.Left;
+			}
 		}
 
-		protected override IEnumerable<KeyValuePair<TKey, TValue>> PreorderVisit(BinaryTreeNode<TKey, TValue> root)
+		/// <summary>
+		/// 
+		/// </summary>
+		// TODO: Implenent postorder traversal
+		internal class PostorderEnumerator : BaseEnumerator
 		{
-			throw new NotImplementedException();
+			public PostorderEnumerator(IterativeBinaryNodeVisitor<TNode> holder) : base(holder) { }
+
+			protected override void AdvanceNext()
+			{
+				throw new NotImplementedException();
+
+#pragma warning disable CS0162 // Unreachable code detected
+				if (_pointer.IsLeaf()) {
+#pragma warning restore CS0162 // Unreachable code detected
+					_pointer = Stack.Pop();
+				}
+
+				while(!_pointer.IsLeaf())
+				{
+					if (!_pointer.Left.IsNull() && _pointer.Left != _current) {
+						Stack.Push(_pointer.Left);
+					} else if (!_pointer.Right.IsNull() && _pointer.Right != _current) {
+						Stack.Push(_pointer.Right);
+					}
+
+					_pointer = _pointer.Left;
+				}
+
+				_current = _pointer;
+			}
 		}
 	}
 }

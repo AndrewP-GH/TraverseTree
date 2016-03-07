@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TraverseTree.Core.Abstract;
 using TraverseTree.Core.Extensions;
 
 namespace TraverseTree.Core.Models
@@ -13,7 +14,7 @@ namespace TraverseTree.Core.Models
 	/// </summary>
 	/// <typeparam name="TKey">Key for search, must be Comparable: <see cref="IComparable{TKey}"/></typeparam>
 	/// <typeparam name="TValue">Value for associated key</typeparam>
-	public class BinaryTree<TKey, TValue> : ICollection<KeyValuePair<TKey, TValue>> 
+	public class BinarySearchTree<TKey, TValue> : IBinarySearchTree<TKey, TValue, BinaryTreeNode<TKey, TValue>>
 		where TKey : IComparable<TKey> 
 	{
 		/// <summary>
@@ -40,7 +41,7 @@ namespace TraverseTree.Core.Models
 		public bool IsEmpty => Root.IsNull();
 
 		/// <summary>
-		/// 
+		/// Get's or set's the key comparer
 		/// </summary>
 		private IComparer<TKey> _keyComparer;
 		public IComparer<TKey> KeyComparer
@@ -61,7 +62,7 @@ namespace TraverseTree.Core.Models
 		}
 
 		/// <summary>
-		/// 
+		/// Get's or set's the value equality comparer
 		/// </summary>
 		private IEqualityComparer<TValue> _valueComparer;
 		public IEqualityComparer<TValue> ValueComparer
@@ -82,44 +83,34 @@ namespace TraverseTree.Core.Models
 		}
 
 		/// <summary>
-		/// 
+		/// Get's the collection of key's associated with this BST
 		/// </summary>
-		public ICollection<TKey> Keys
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
+		public ICollection<TKey> Keys =>
+			this.Select(x => x.Key).ToArray();
 
 		/// <summary>
-		/// 
+		/// Get's the collection of values associated with this BST
 		/// </summary>
-		public ICollection<TValue> Values
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
+		public ICollection<TValue> Values =>
+			this.Select(x => x.Value).ToArray();
 
 		/// <summary>
 		/// Create empty instance of BST
 		/// </summary>
-		public BinaryTree() { }
+		public BinarySearchTree() { }
 
 		/// <summary>
 		/// Create instance of BST with specified root node
 		/// </summary>
 		/// <param name="root"><see cref="BinaryTreeNode{TKey, TValue}"/></param>
-		public BinaryTree(BinaryTreeNode<TKey, TValue> root) : 
+		public BinarySearchTree(BinaryTreeNode<TKey, TValue> root) : 
 			this(root, Comparer<TKey>.Default, EqualityComparer<TValue>.Default) { }
 
 		/// <summary>
 		/// Create instance of BST with specified key comparer
 		/// </summary>
 		/// <param name="keyComparer"><seealso cref="IComparable{T}"/></param>
-		public BinaryTree(IComparer<TKey> keyComparer) : 
+		public BinarySearchTree(IComparer<TKey> keyComparer) : 
 			this(null, keyComparer, EqualityComparer<TValue>.Default) { }
 		
 		/// <summary>
@@ -127,7 +118,7 @@ namespace TraverseTree.Core.Models
 		/// </summary>
 		/// <param name="root"></param>
 		/// <param name="keyComparer"></param>
-		public BinaryTree(BinaryTreeNode<TKey, TValue> root, IComparer<TKey> keyComparer, IEqualityComparer<TValue> valueComparer)
+		public BinarySearchTree(BinaryTreeNode<TKey, TValue> root, IComparer<TKey> keyComparer, IEqualityComparer<TValue> valueComparer)
 		{
 			Root = root;
 			KeyComparer = keyComparer;
@@ -135,15 +126,42 @@ namespace TraverseTree.Core.Models
 			Count = IsEmpty ? 0 : 1;
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public bool ContainsKey(TKey key) =>
 			FindOrRemoveAllInternal(key, SearchingMode.SearchByKey).Count > 0;
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
 		public bool Contains(TKey key, TValue value) =>
 			FindOrRemoveAllInternal(key, SearchingMode.SearchByKeyAndValue, value).Count > 0;
 
-		public bool Contains(KeyValuePair<TKey, TValue> item) =>
-			Contains(item.Key, item.Value);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="item"></param>
+		/// <returns></returns>
+		public bool Contains(BinaryTreeNode<TKey, TValue> item)
+		{
+			if (item.IsNull()) {
+				throw new ArgumentNullException(nameof(item));
+			}
+			
+			return Contains(item.Key, item.Value);
+		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
 		public void Add(TKey key, TValue value)
 		{
 			BinaryTreeNode<TKey, TValue> createdNode = new BinaryTreeNode<TKey, TValue>(key, value);
@@ -174,24 +192,69 @@ namespace TraverseTree.Core.Models
 			Count++;
 		}
 
-		public void Add(KeyValuePair<TKey, TValue> item) => 
-			Add(item.Key, item.Value);
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="item"></param>
+		public void Add(BinaryTreeNode<TKey, TValue> item)
+		{
+			if (item.IsNull()) {
+				throw new ArgumentNullException(nameof(item));
+			}
 
-		public void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> pairs) =>
+			if (item.IsLeaf()) {
+				Add(item.Key, item.Value);
+			} 
+			else
+			{
+				IterativeBinaryNodeVisitor<BinaryTreeNode<TKey, TValue>> visitor = 
+					new IterativeBinaryNodeVisitor<BinaryTreeNode<TKey, TValue>>(item, TraverseMode.Preorder);
+
+				visitor.Each(x => Add(x.Key, x.Value));
+			}
+		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="pairs"></param>
+		public void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> pairs)
+		{
+			if (pairs.IsNull()) {
+				throw new ArgumentNullException(nameof(pairs));
+			}
+
 			pairs.Each(x => Add(x.Key, x.Value));
+		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public IEnumerable<KeyValuePair<TKey, TValue>> Find(TKey key)
 		{
 			return FindOrRemoveAllInternal(key, SearchingMode.SearchByKey).
 				Transform(x => new KeyValuePair<TKey, TValue>(x.Key, x.Value));
 		}
 		
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
 		public IEnumerable<KeyValuePair<TKey, TValue>> Find(TKey key, TValue value)
 		{
 			return FindOrRemoveAllInternal(key, SearchingMode.SearchByKeyAndValue, value).
 				Transform(x => new KeyValuePair<TKey, TValue>(x.Key, x.Value));
 		}
 
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
 		public IEnumerable<TValue> FindValues (TKey key)
 		{
 			IList<BinaryTreeNode<TKey, TValue>> searchResult = 
@@ -230,12 +293,18 @@ namespace TraverseTree.Core.Models
 			FindOrRemoveAllInternal(key, SearchingMode.RemoveByKeyAndValue, value).Count > 0;
 
 		/// <summary>
-		/// Remvoe all nodes by key and value
+		/// Remvoe all nodes selected by key and value
 		/// </summary>
 		/// <param name="item"></param>
 		/// <returns></returns>
-		public bool Remove(KeyValuePair<TKey, TValue> item) =>
-			Remove(item.Key, item.Value);
+		public bool Remove(BinaryTreeNode<TKey, TValue> item)
+		{
+			if (item.IsNull()) {
+				throw new ArgumentNullException(nameof(item));
+			}
+
+			return Remove(item.Key, item.Value);
+		}
 
 		/// <summary>
 		/// Remove all nodes from BST
@@ -251,7 +320,7 @@ namespace TraverseTree.Core.Models
 		/// </summary>
 		/// <param name="array"></param>
 		/// <param name="arrayIndex"></param>
-		public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex)
+		public void CopyTo(BinaryTreeNode<TKey, TValue>[] array, int arrayIndex)
 		{
 			if (array.IsNull()) {
 				throw new ArgumentNullException(nameof(array));
@@ -265,18 +334,34 @@ namespace TraverseTree.Core.Models
 				throw new ArgumentException("Invalid index");
 			}
 
-			throw new NotImplementedException();
+			var enumerator = GetEnumerator();
+			for (int i = arrayIndex; i != array.Length || enumerator.MoveNext(); ++i)
+			{
+				array[i] = enumerator.Current;
+			}
 		}
 
-		public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
-		{
-			throw new NotImplementedException();
-		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			throw new NotImplementedException();
-		}
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerator<BinaryTreeNode<TKey, TValue>> GetEnumerator() =>
+			new IterativeBinaryNodeVisitor<BinaryTreeNode<TKey, TValue>>(Root).GetEnumerator();
+
+		/// <summary>
+		/// Get's the string represantation of this BST
+		/// </summary>
+		/// <returns>
+		/// Return string, formated as follows: "Count = {Count}" where count is <see cref="Count"/>
+		/// </returns>
+		public override string ToString() =>
+			String.Format("Count = {0}", Count);
 
 		#region Helper methods
 
@@ -364,12 +449,12 @@ namespace TraverseTree.Core.Models
 		{
 			BinaryTreeNode<TKey, TValue> next = null;
 
-			if (node.IsLeaf)
+			if (node.IsLeaf())
 			{
 				// if node hasn't child, just remove it
 				node.Parent.DetachChild(node);
 			}
-			else if (node.HasLeftOnly)
+			else if (node.HasLeftOnly())
 			{
 				// if node has only left child, then replace it:
 				// node -> parent -> (left || right) with node -> left
@@ -378,7 +463,7 @@ namespace TraverseTree.Core.Models
 				node.Left.Parent = node.Parent;
 				next = node.Left;
 			}
-			else if (node.HasRightOnly)
+			else if (node.HasRightOnly())
 			{
 				// if node has only right child, then replace it:
 				// node -> parent -> (left || right) with node -> right
@@ -391,7 +476,7 @@ namespace TraverseTree.Core.Models
 			{
 				// Otherwise, the worst case, when node contain two children
 				// Find the most left node in right subtree
-				BinaryTreeNode<TKey, TValue> minimum = node.Right.Minimum;
+				BinaryTreeNode<TKey, TValue> minimum = node.Right.Leftmost;
 
 				// detach founded node
 				minimum.Parent.Left = minimum.Right;

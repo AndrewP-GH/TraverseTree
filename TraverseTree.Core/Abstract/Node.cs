@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using TraverseTree.Core.Abstract;
+using TraverseTree.Core.Extensions;
 
-namespace TraverseTree.Core.Models
+namespace TraverseTree.Core.Abstract
 {
 	/// <summary>
 	/// 
@@ -23,26 +23,26 @@ namespace TraverseTree.Core.Models
 		/// <summary>
 		/// 
 		/// </summary>
-		public Node() { }
+		protected Node() { }
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <param name="data"></param>
-		public Node(TValue data)
+		protected Node(TValue value)
 		{
-			if (data == null) { 
-				throw new ArgumentNullException(nameof(data));
+			if (value.IsNull())
+			{
+				throw new ArgumentNullException(nameof(value));
 			}
 
-			Value = data;
+			Value = value;
 		}
 
 		/// <summary>
 		/// 
 		/// </summary>
 		/// <returns></returns>
-		public override string ToString() =>
-			Value.ToString();
+		public override string ToString() => Value.ToString();
 	}
 }

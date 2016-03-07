@@ -5,17 +5,17 @@ namespace TraverseTree.Core.Abstract
 	/// <summary>
 	/// 
 	/// </summary>
-	/// <typeparam name="T"></typeparam>
-	public interface INode<out T>
+	/// <typeparam name="TValue"></typeparam>
+	public interface INode<out TValue>
 	{
 		/// <summary>
 		/// 
 		/// </summary>
-		T Value { get; }
+		TValue Value { get; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		IEnumerable<INode<T>> InnerNodes { get; }
+		IEnumerable<INode<TValue>> InnerNodes { get; }
 	}
 }

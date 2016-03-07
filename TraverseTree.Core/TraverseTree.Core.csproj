@@ -37,14 +37,24 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstract\IBinaryHierarchical.cs" />
+    <Compile Include="Abstract\IBinarySearchTree.cs" />
+    <Compile Include="Abstract\IBinaryTree.cs" />
+    <Compile Include="Abstract\IKeyValueNode.cs" />
     <Compile Include="Abstract\INode.cs" />
-    <Compile Include="Extensions\BinaryTreeNodeExtensions.cs" />
-    <Compile Include="Extensions\EnumerableExtensions.cs" />
-    <Compile Include="Models\BinaryTree.cs" />
+    <Compile Include="Abstract\KeyValueNode.cs" />
+    <Compile Include="Abstract\Node.cs" />
+    <Compile Include="Extensions\BinaryTreeNodeExtenssions.cs" />
+    <Compile Include="Extensions\CollectionExtenssions.cs" />
+    <Compile Include="Extensions\EnumerableExtenssions.cs" />
+    <Compile Include="Extensions\GenericExtenssions.cs" />
+    <Compile Include="Extensions\HierarchicalExtenssions.cs" />
+    <Compile Include="Extensions\KeyValueNodeExtenssions.cs" />
+    <Compile Include="Models\BinarySearchTree.cs" />
     <Compile Include="Models\BinaryTreeVisitor.cs" />
     <Compile Include="Models\BinaryTreeNode.cs" />
     <Compile Include="Abstract\IBinaryTreeVisitor.cs" />
-    <Compile Include="Models\Node.cs" />
+    <Compile Include="Models\TraverseMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TraverseTree.Core.Abstract;
 using TraverseTree.Core.Models;
 using TraverseTree.Core.Extensions;
 
@@ -19,19 +20,19 @@ namespace TraverseTree.UnitTest
 			node.Left = new BinaryTreeNode<int, string>(-1, "-1");
 			node.Right = new BinaryTreeNode<int, string>(2, "2");
 
-			Assert.AreEqual(node.Minimum, node.Left);
-			Assert.AreEqual(node.Maximum, node.Right);
+			Assert.AreEqual(node.Leftmost, node.Left);
+			Assert.AreEqual(node.Rightmost, node.Right);
 
 			node.Left.Left = new BinaryTreeNode<int, string>(-2, "-2");
 			node.Right.Right = new BinaryTreeNode<int, string>(3, "3");
 
-			Assert.AreEqual(node.Minimum, node.Left.Left);
-			Assert.AreEqual(node.Maximum, node.Right.Right);
+			Assert.AreEqual(node.Leftmost, node.Left.Left);
+			Assert.AreEqual(node.Rightmost, node.Right.Right);
 
 			node.Left.Left.Left = new BinaryTreeNode<int, string>(-3, "-3");
 			node.Left.Left.Left.Left = new BinaryTreeNode<int, string>(-4, "4");
 
-			Assert.AreEqual(node.Minimum, node.Left.Left.Left.Left);
+			Assert.AreEqual(node.Leftmost, node.Left.Left.Left.Left);
 		}
 	}
 
@@ -42,7 +43,7 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTest_CreateAdd()
 		{
 			/// Arrange
-			BinaryTree<string, string> tree = new BinaryTree<string, string>();
+			BinarySearchTree<string, string> tree = new BinarySearchTree<string, string>();
 
 			/// Act-Assert
 			Assert.AreEqual(tree.IsEmpty, true);
@@ -76,7 +77,7 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTest_FindContainHeight()
 		{
 			/// Arrange
-			BinaryTree<string, string> tree = new BinaryTree<string, string>();
+			BinarySearchTree<string, string> tree = new BinarySearchTree<string, string>();
 
 			tree.AddRange(new KeyValuePair<string, string>[]
 				{
@@ -126,7 +127,7 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTest_Remove()
 		{
 			/// Arrange
-			BinaryTree<int, string> tree = new BinaryTree<int, string>();
+			BinarySearchTree<int, string> tree = new BinarySearchTree<int, string>();
 
 			tree.AddRange(new KeyValuePair<int, string>[]
 				{
@@ -189,7 +190,7 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTest_Clear()
 		{
 			/// Arrange
-			BinaryTree<int, string> tree = new BinaryTree<int, string>();
+			BinarySearchTree<int, string> tree = new BinarySearchTree<int, string>();
 
 			tree.AddRange(new KeyValuePair<int, string>[]
 				{
@@ -217,6 +218,112 @@ namespace TraverseTree.UnitTest
 
 			/// Assert
 			Assert.AreNotEqual(after - before, 0L);
+		}
+	}
+
+	[TestClass]
+	public class BinaryTreeTraverse
+	{
+		private readonly BinarySearchTree<int, string> _tree;
+
+		public BinaryTreeTraverse()
+		{
+			_tree = new BinarySearchTree<int, string>();
+
+			_tree.AddRange(new KeyValuePair<int, string>[]
+				{
+					new KeyValuePair<int, string>(15, "5"),
+					new KeyValuePair<int, string>(5, "5"),
+					new KeyValuePair<int, string>(16, "5"),
+					new KeyValuePair<int, string>(16, "5"),
+					new KeyValuePair<int, string>(3, "4"),
+					new KeyValuePair<int, string>(2, "4"),
+					new KeyValuePair<int, string>(12, "3"),
+					new KeyValuePair<int, string>(10, "2"),
+					new KeyValuePair<int, string>(13, "1"),
+					new KeyValuePair<int, string>(6, "1"),
+					new KeyValuePair<int, string>(7, "4"),
+					new KeyValuePair<int, string>(20, "3"),
+					new KeyValuePair<int, string>(18, "2"),
+					new KeyValuePair<int, string>(23, "1")
+				}
+			);
+
+		}
+
+		[TestMethod]
+		public void BinaryTreeTraverse_Inorder()
+		{
+			/// Arrange
+			IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> visitor = 
+				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>>(_tree.Root);
+
+			/// Act
+			foreach(var pair in visitor)
+			{
+				var key = pair.Key;
+			}
+
+			var keys = visitor.Select(x => x.Key).ToArray();
+			var result = new int[] { 2, 3, 5, 6, 7, 10, 12, 13, 15, 16, 16, 18, 20, 23 };
+
+			/// Assert
+			Assert.AreEqual(keys.Length, _tree.Count);
+
+			for(int i = 0; i != result.Length; i++)
+			{
+				Assert.AreEqual(result[i], keys[i]);
+			}
+		}
+
+		[TestMethod]
+		public void BinaryTreeTraverse_Preorder()
+		{
+			/// Arrange
+			IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> visitor =
+				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> (_tree.Root, new Stack<BinaryTreeNode<int, string>>(), TraverseMode.Preorder);
+
+			/// Act
+			foreach (var pair in visitor)
+			{
+				var key = pair.Key;
+			}
+
+			var keys = visitor.Select(x => x.Key).ToArray();
+			var result = new int[] { 15, 5, 3, 2, 12, 10, 6, 7, 13, 16, 16, 20, 18, 23 };
+
+			/// Assert
+			Assert.AreEqual(keys.Length, _tree.Count);
+
+			for (int i = 0; i != result.Length; i++)
+			{
+				Assert.AreEqual(result[i], keys[i]);
+			}
+		}
+
+		[TestMethod]
+		public void BinaryTreeTraverse_Postorder()
+		{
+			/// Arrange
+			IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> visitor =
+				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>>(_tree.Root, new Stack<BinaryTreeNode<int, string>>(), TraverseMode.Postorder);
+
+			/// Act
+			foreach (var pair in visitor)
+			{
+				var key = pair.Key;
+			}
+
+			var keys = visitor.Select(x => x.Key).ToArray();
+			var result = new int[] { 2, 3, 6, 7, 10, 13, 12, 5, 18, 23, 20, 16, 16, 15 };
+
+			/// Assert
+			Assert.AreEqual(keys.Length, _tree.Count);
+
+			for (int i = 0; i != result.Length; i++)
+			{
+				Assert.AreEqual(result[i], keys[i]);
+			}
 		}
 	}
 }

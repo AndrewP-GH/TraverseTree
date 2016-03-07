@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-
 using TraverseTree.Core.Abstract;
 using TraverseTree.Core.Extensions;
-
 
 namespace TraverseTree.Core.Models
 {
@@ -12,13 +10,8 @@ namespace TraverseTree.Core.Models
 	/// </summary>
 	/// <typeparam name="TKey">The key for node</typeparam>
 	/// <typeparam name="TValue">The value for node</typeparam>
-	public class BinaryTreeNode<TKey, TValue> : Node<TValue>
+	public class BinaryTreeNode<TKey, TValue> : KeyValueNode<TKey, TValue>, IBinaryHierarchical<BinaryTreeNode<TKey, TValue>>
 	{
-		/// <summary>
-		/// Key associated with node
-		/// </summary>
-		public TKey Key { get; }
-
 		/// <summary>
 		/// Get's or set's the left node from current
 		/// </summary>
@@ -33,28 +26,11 @@ namespace TraverseTree.Core.Models
 		/// Get's or set's the parent node from current
 		/// </summary>
 		public BinaryTreeNode<TKey, TValue> Parent { get; set; }
-		/// <summary>
-		/// Indicates if there is left and right nodes
-		/// </summary>
-		public bool IsLeaf =>
-			Left.IsNull() && Right.IsNull();
-
-		/// <summary>
-		/// Indicates, if node contain only left child
-		/// </summary>
-		public bool HasLeftOnly => 
-			Right.IsNull() && !Left.IsNull();
-
-		/// <summary>
-		/// Indicated, if node contain only right child
-		/// </summary>
-		public bool HasRightOnly => 
-			Left.IsNull() && !Right.IsNull();
 
 		/// <summary>
 		/// Get the most left node from current
 		/// </summary>
-		public BinaryTreeNode<TKey, TValue> Minimum
+		public BinaryTreeNode<TKey, TValue> Leftmost
 		{
 			get
 			{
@@ -71,7 +47,7 @@ namespace TraverseTree.Core.Models
 		/// <summary>
 		/// Get the most right node from current
 		/// </summary>
-		public BinaryTreeNode<TKey, TValue> Maximum
+		public BinaryTreeNode<TKey, TValue> Rightmost
 		{
 			get
 			{
@@ -123,14 +99,8 @@ namespace TraverseTree.Core.Models
 		/// <param name="right">Right child</param>
 		/// <param name="parent">Parent node</param>
 		public BinaryTreeNode(TKey key, TValue value, BinaryTreeNode<TKey, TValue> left, BinaryTreeNode<TKey, TValue> right, BinaryTreeNode<TKey, TValue> parent) :
-			base(value)
+			base(key, value)
 		{
-			if (key.IsNull())
-			{
-				throw new ArgumentNullException(nameof(key));
-			}
-
-			Key = key;
 			Left = left;
 			Right = right;
 			Parent = parent;
@@ -145,13 +115,6 @@ namespace TraverseTree.Core.Models
 			Right = null;
 			Parent = null;
 		}
-
-		/// <summary>
-		/// Get's string representation from this node
-		/// </summary>
-		/// <returns>String, formatted as follows: Key {Key} Value {Value}</returns>
-		public override string ToString() =>
-			String.Format("Key: {0} Value: {1}", Key, Value);
 
 		/// <summary>
 		/// Create's node with only left child
