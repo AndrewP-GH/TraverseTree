@@ -281,7 +281,7 @@ namespace TraverseTree.UnitTest
 		{
 			/// Arrange
 			IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> visitor =
-				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> (_tree.Root, new Stack<BinaryTreeNode<int, string>>(), TraverseMode.Preorder);
+				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> (_tree.Root, TraverseMode.Preorder);
 
 			/// Act
 			foreach (var pair in visitor)
@@ -306,7 +306,7 @@ namespace TraverseTree.UnitTest
 		{
 			/// Arrange
 			IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> visitor =
-				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>>(_tree.Root, new Stack<BinaryTreeNode<int, string>>(), TraverseMode.Postorder);
+				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>>(_tree.Root, TraverseMode.Postorder);
 
 			/// Act
 			foreach (var pair in visitor)

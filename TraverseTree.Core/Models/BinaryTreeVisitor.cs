@@ -20,15 +20,15 @@ namespace TraverseTree.Core.Models
 		public TraverseMode TraverseMode { get; set; }
 
 		public IterativeBinaryNodeVisitor(TNode startNode) :
-			this(startNode, new Stack<TNode>(), TraverseMode.Inorder) { }
+			this(startNode, new StackDecorator<TNode>(), TraverseMode.Inorder) { }
 
 		public IterativeBinaryNodeVisitor(TNode startNode, TraverseMode traverseMode) :
-			this(startNode, new Stack<TNode>(), traverseMode) { }
+			this(startNode, new StackDecorator<TNode>(), traverseMode) { }
 
-		public IterativeBinaryNodeVisitor(TNode startNode, Stack<TNode> stack) :
+		public IterativeBinaryNodeVisitor(TNode startNode, ICollectionDecorator<TNode> stack) :
 			this(startNode, stack, TraverseMode.Inorder) { }
 
-		public IterativeBinaryNodeVisitor(TNode startNode, Stack<TNode> stack, TraverseMode traverseMode)
+		public IterativeBinaryNodeVisitor(TNode startNode, ICollectionDecorator<TNode> stack, TraverseMode traverseMode)
 		{
 			if (startNode.IsNull()) {
 				throw new ArgumentNullException(nameof(startNode));
@@ -57,7 +57,7 @@ namespace TraverseTree.Core.Models
 		}
 
 		private readonly TNode _start;
-		private readonly Stack<TNode> _stack;
+		private readonly ICollectionDecorator<TNode> _stack;
 
 		/// <summary>
 		/// 
@@ -77,7 +77,7 @@ namespace TraverseTree.Core.Models
 			/// <summary>
 			/// 
 			/// </summary>
-			protected Stack<TNode> Stack => _holder._stack;
+			protected ICollectionDecorator<TNode> StoredNodes => _holder._stack;
 
 			/// <summary>
 			/// 
@@ -95,7 +95,7 @@ namespace TraverseTree.Core.Models
 			{
 				_current = null;
 				_pointer = _holder.StartNode;
-				Stack.Clear();
+				StoredNodes.Clear();
 			}
 
 			/// <summary>
@@ -107,7 +107,7 @@ namespace TraverseTree.Core.Models
 			/// </returns>
 			public bool MoveNext()
 			{
-				bool stop = ( !Stack.IsEmpty() || !_pointer.IsNull() );
+				bool stop = ( !StoredNodes.IsEmpty() || !_pointer.IsNull() );
 
 				if (stop) {
 					AdvanceNext();
@@ -155,12 +155,12 @@ namespace TraverseTree.Core.Models
 				{
 					while (!_pointer.IsNull())
 					{
-						Stack.Push(_pointer);
+						StoredNodes.Put(_pointer);
 						_pointer = _pointer.Left;
 					}
 				}
 
-				_pointer = Stack.Pop();
+				_pointer = StoredNodes.Get();
 				_current = _pointer;
 				_pointer = _pointer.Right;
 			}
@@ -177,14 +177,14 @@ namespace TraverseTree.Core.Models
 			{
 				if (_pointer.IsNull())
 				{
-					_pointer = Stack.Pop();
+					_pointer = StoredNodes.Get();
 				}
 
 				_current = _pointer;
 
 				if (!_pointer.Right.IsNull())
 				{
-					Stack.Push(_pointer.Right);
+					StoredNodes.Put(_pointer.Right);
 				}
 
 				_pointer = _pointer.Left;
@@ -203,24 +203,22 @@ namespace TraverseTree.Core.Models
 			{
 				throw new NotImplementedException();
 
-#pragma warning disable CS0162 // Unreachable code detected
-				if (_pointer.IsLeaf()) {
-#pragma warning restore CS0162 // Unreachable code detected
-					_pointer = Stack.Pop();
-				}
-
-				while(!_pointer.IsLeaf())
-				{
-					if (!_pointer.Left.IsNull() && _pointer.Left != _current) {
-						Stack.Push(_pointer.Left);
-					} else if (!_pointer.Right.IsNull() && _pointer.Right != _current) {
-						Stack.Push(_pointer.Right);
-					}
-
-					_pointer = _pointer.Left;
-				}
-
-				_current = _pointer;
+				//if (_pointer.IsLeaf()) {
+				//	_pointer = StoredNodes.Get();
+				//}
+				//
+				//while(!_pointer.IsLeaf())
+				//{
+				//	if (!_pointer.Left.IsNull() && _pointer.Left != _current) {
+				//		StoredNodes.Put(_pointer.Left);
+				//	} else if (!_pointer.Right.IsNull() && _pointer.Right != _current) {
+				//		StoredNodes.Put(_pointer.Right);
+				//	}
+				//
+				//	_pointer = _pointer.Left;
+				//}
+				//
+				//_current = _pointer;
 			}
 		}
 	}

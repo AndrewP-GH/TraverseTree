@@ -48,7 +48,7 @@ namespace TraverseTree.Core.Extensions
 		/// <param name="node"></param>
 		/// <returns></returns>
 		internal static bool HasLeftOnly<TNode>(this IBinaryHierarchical<TNode> node) where TNode : IBinaryHierarchical<TNode> =>
-			node.Left.IsNull() && !node.Right.IsNull();
+			!node.Left.IsNull() && node.Right.IsNull();
 
 		/// <summary>
 		/// 
@@ -57,6 +57,6 @@ namespace TraverseTree.Core.Extensions
 		/// <param name="node"></param>
 		/// <returns></returns>
 		internal static bool HasRightOnly<TNode>(this IBinaryHierarchical<TNode> node) where TNode : IBinaryHierarchical<TNode> =>
-			!node.Left.IsNull() && node.Right.IsNull();
+			node.Left.IsNull() && !node.Right.IsNull();
 	}
 }

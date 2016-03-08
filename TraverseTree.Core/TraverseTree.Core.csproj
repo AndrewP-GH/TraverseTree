@@ -40,6 +40,7 @@
     <Compile Include="Abstract\IBinaryHierarchical.cs" />
     <Compile Include="Abstract\IBinarySearchTree.cs" />
     <Compile Include="Abstract\IBinaryTree.cs" />
+    <Compile Include="Abstract\ICollectionDecorator.cs" />
     <Compile Include="Abstract\IKeyValueNode.cs" />
     <Compile Include="Abstract\INode.cs" />
     <Compile Include="Abstract\KeyValueNode.cs" />
@@ -54,10 +55,14 @@
     <Compile Include="Models\BinaryTreeVisitor.cs" />
     <Compile Include="Models\BinaryTreeNode.cs" />
     <Compile Include="Abstract\IBinaryTreeVisitor.cs" />
+    <Compile Include="Models\QueueDecorator.cs" />
+    <Compile Include="Models\StackDecorator.cs" />
     <Compile Include="Models\TraverseMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
