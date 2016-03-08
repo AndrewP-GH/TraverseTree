@@ -265,14 +265,14 @@ namespace TraverseTree.UnitTest
 			}
 
 			var keys = visitor.Select(x => x.Key).ToArray();
-			var result = new int[] { 2, 3, 5, 6, 7, 10, 12, 13, 15, 16, 16, 18, 20, 23 };
+			var expected = new int[] { 2, 3, 5, 6, 7, 10, 12, 13, 15, 16, 16, 18, 20, 23 };
 
 			/// Assert
 			Assert.AreEqual(keys.Length, _tree.Count);
 
-			for(int i = 0; i != result.Length; i++)
+			for(int i = 0; i != expected.Length; i++)
 			{
-				Assert.AreEqual(result[i], keys[i]);
+				Assert.AreEqual(expected[i], keys[i]);
 			}
 		}
 
@@ -290,14 +290,14 @@ namespace TraverseTree.UnitTest
 			}
 
 			var keys = visitor.Select(x => x.Key).ToArray();
-			var result = new int[] { 15, 5, 3, 2, 12, 10, 6, 7, 13, 16, 16, 20, 18, 23 };
+			var expected = new int[] { 15, 5, 3, 2, 12, 10, 6, 7, 13, 16, 16, 20, 18, 23 };
 
 			/// Assert
 			Assert.AreEqual(keys.Length, _tree.Count);
 
-			for (int i = 0; i != result.Length; i++)
+			for (int i = 0; i != expected.Length; i++)
 			{
-				Assert.AreEqual(result[i], keys[i]);
+				Assert.AreEqual(expected[i], keys[i]);
 			}
 		}
 
@@ -315,14 +315,38 @@ namespace TraverseTree.UnitTest
 			}
 
 			var keys = visitor.Select(x => x.Key).ToArray();
-			var result = new int[] { 2, 3, 6, 7, 10, 13, 12, 5, 18, 23, 20, 16, 16, 15 };
+			var expected = new int[] { 2, 3, 6, 7, 10, 13, 12, 5, 18, 23, 20, 16, 16, 15 };
 
 			/// Assert
 			Assert.AreEqual(keys.Length, _tree.Count);
 
-			for (int i = 0; i != result.Length; i++)
+			for (int i = 0; i != expected.Length; i++)
 			{
-				Assert.AreEqual(result[i], keys[i]);
+				Assert.AreEqual(expected[i], keys[i]);
+			}
+		}
+
+		[TestMethod]
+		public void BinaryTreeTraverse_Levelorder()
+		{
+			IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> visitor =
+				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>>(_tree.Root, TraverseMode.Leverorder);
+
+			/// Act
+			foreach (var pair in visitor)
+			{
+				var key = pair.Key;
+			}
+
+			var keys = visitor.Select(x => x.Key).ToArray();
+			var expected = new int[] { 15, 5, 16, 3, 12, 16, 2, 10, 13, 20, 6, 18, 23, 7 };
+
+			/// Assert
+			Assert.AreEqual(keys.Length, _tree.Count);
+
+			for (int i = 0; i != expected.Length; i++)
+			{
+				Assert.AreEqual(expected[i], keys[i]);
 			}
 		}
 	}

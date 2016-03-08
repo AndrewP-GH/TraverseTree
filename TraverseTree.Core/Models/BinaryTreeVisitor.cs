@@ -23,7 +23,7 @@ namespace TraverseTree.Core.Models
 			this(startNode, new StackDecorator<TNode>(), TraverseMode.Inorder) { }
 
 		public IterativeBinaryNodeVisitor(TNode startNode, TraverseMode traverseMode) :
-			this(startNode, new StackDecorator<TNode>(), traverseMode) { }
+			this(startNode, ( traverseMode == TraverseMode.Leverorder ) ? new QueueDecorator<TNode>() as ICollectionDecorator<TNode> : new StackDecorator<TNode>(), traverseMode) { }
 
 		public IterativeBinaryNodeVisitor(TNode startNode, ICollectionDecorator<TNode> stack) :
 			this(startNode, stack, TraverseMode.Inorder) { }
@@ -51,6 +51,8 @@ namespace TraverseTree.Core.Models
 				return new InorderEnumerator(this);
 			} else if (TraverseMode == TraverseMode.Postorder) {
 				return new PostorderEnumerator(this);
+			} else if (TraverseMode == TraverseMode.Leverorder) {
+				return new LevelorderEnumerator(this);
 			}
 			
 			return new PreorderEnumerator(this);
@@ -140,7 +142,7 @@ namespace TraverseTree.Core.Models
 		}
 
 		/// <summary>
-		/// 
+		/// Represent Inorder traverse
 		/// </summary>
 		internal class InorderEnumerator : BaseEnumerator
 		{
@@ -167,7 +169,7 @@ namespace TraverseTree.Core.Models
 		}
 
 		/// <summary>
-		/// 
+		/// Represent Preorder traverse
 		/// </summary>
 		internal class PreorderEnumerator : BaseEnumerator
 		{
@@ -192,7 +194,7 @@ namespace TraverseTree.Core.Models
 		}
 
 		/// <summary>
-		/// 
+		/// Represent Postorder traverse
 		/// </summary>
 		// TODO: Implenent postorder traversal
 		internal class PostorderEnumerator : BaseEnumerator
@@ -219,6 +221,37 @@ namespace TraverseTree.Core.Models
 				//}
 				//
 				//_current = _pointer;
+			}
+		}
+
+		/// <summary>
+		/// Represent right Level order traverse
+		/// </summary>
+		internal class LevelorderEnumerator : BaseEnumerator
+		{
+			public LevelorderEnumerator(IterativeBinaryNodeVisitor<TNode> holder) : base(holder) { }
+
+			protected override void AdvanceNext()
+			{
+				if (StoredNodes.IsEmpty() && _current.IsNull()) {
+					StoredNodes.Put(_pointer);
+				}
+
+				_pointer = StoredNodes.Get();
+
+				if (!_pointer.Left.IsNull()) {
+					StoredNodes.Put(_pointer.Left);
+				}
+
+				if (!_pointer.Right.IsNull()) {
+					StoredNodes.Put(_pointer.Right);
+				}
+
+				_current = _pointer;
+
+				if (StoredNodes.IsEmpty() && _pointer.IsLeaf()) {
+					_pointer = null;
+				}
 			}
 		}
 	}

@@ -18,6 +18,11 @@
 		/// <summary>
 		/// Visit at first left node, than right node and current node.
 		/// </summary>
-		Postorder
+		Postorder,
+
+		/// <summary>
+		/// Visit tree on each level
+		/// </summary>
+		Leverorder
 	}
 }
