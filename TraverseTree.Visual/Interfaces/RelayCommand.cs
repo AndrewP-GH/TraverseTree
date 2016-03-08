@@ -74,4 +74,23 @@ namespace TraverseTree.Visual.Interfaces
 		private readonly Action<TExecuteArg> _execute;
 		private readonly Predicate<TCanExecuteArg> _canExecute;
 	}
+
+	/// <summary>
+	/// 
+	/// </summary>
+	public class RelayCommand :	RelayCommand<object, object>
+	{
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="execute"></param>
+		public RelayCommand(Action<object> execute) : this(execute, null) { }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="execute"></param>
+		/// <param name="canExecute"></param>
+		public RelayCommand(Action<object> execute, Predicate<object> canExecute) : base(execute, canExecute) { }
+	}
 }

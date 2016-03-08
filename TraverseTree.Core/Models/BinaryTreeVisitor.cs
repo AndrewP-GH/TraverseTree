@@ -10,7 +10,7 @@ using TraverseTree.Core.Extensions;
 namespace TraverseTree.Core.Models
 {
 	/// <summary>
-	/// 
+	/// Represent iterative binary tree visitor; implements <see cref="IBinaryNodeVisitor{TNode}"/>
 	/// </summary>
 	/// <typeparam name="TNode"></typeparam>
 	public class IterativeBinaryNodeVisitor<TNode> : IBinaryNodeVisitor<TNode> where TNode : class, IBinaryHierarchical<TNode>
