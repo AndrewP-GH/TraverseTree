@@ -20,6 +20,6 @@ namespace TraverseTree.Core.Abstract
 		/// <summary>
 		/// 
 		/// </summary>
-		TNode StartNode { get; }
+		TNode StartNode { get; set; }
 	}
 }

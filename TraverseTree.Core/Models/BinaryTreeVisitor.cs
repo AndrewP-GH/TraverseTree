@@ -15,7 +15,7 @@ namespace TraverseTree.Core.Models
 	/// <typeparam name="TNode"></typeparam>
 	public class IterativeBinaryNodeVisitor<TNode> : IBinaryNodeVisitor<TNode> where TNode : class, IBinaryHierarchical<TNode>
 	{
-		public TNode StartNode => _start;
+		public TNode StartNode { get; set; }
 
 		public TraverseMode TraverseMode { get; set; }
 
@@ -38,8 +38,8 @@ namespace TraverseTree.Core.Models
 				throw new ArgumentNullException(nameof(stack));
 			}
 
-			_start = startNode;
-			_stack = stack;
+			StartNode = startNode;
+			_nodes = stack;
 			TraverseMode = traverseMode;
 		}
 
@@ -58,8 +58,7 @@ namespace TraverseTree.Core.Models
 			return new PreorderEnumerator(this);
 		}
 
-		private readonly TNode _start;
-		private readonly ICollectionDecorator<TNode> _stack;
+		private readonly ICollectionDecorator<TNode> _nodes;
 
 		/// <summary>
 		/// 
@@ -79,15 +78,9 @@ namespace TraverseTree.Core.Models
 			/// <summary>
 			/// 
 			/// </summary>
-			protected ICollectionDecorator<TNode> StoredNodes => _holder._stack;
-
-			/// <summary>
-			/// 
-			/// </summary>
 			public virtual void Dispose()
 			{
 				Reset();
-				_holder = null;
 			}
 			
 			/// <summary>
@@ -96,9 +89,9 @@ namespace TraverseTree.Core.Models
 			public virtual void Reset()
 			{
 				_current = null;
-				_pointer = _holder.StartNode;
-				StoredNodes.Clear();
-			}
+				_pointer = _start;
+				_nodes.Clear();
+			} 
 
 			/// <summary>
 			/// Advanse enumerator in the next element to the collection
@@ -109,7 +102,7 @@ namespace TraverseTree.Core.Models
 			/// </returns>
 			public bool MoveNext()
 			{
-				bool stop = ( !StoredNodes.IsEmpty() || !_pointer.IsNull() );
+				bool stop = ( !_nodes.IsEmpty() || !_pointer.IsNull() );
 
 				if (stop) {
 					AdvanceNext();
@@ -124,11 +117,12 @@ namespace TraverseTree.Core.Models
 			/// 
 			/// </summary>
 			/// <param name="holder"></param>
-			protected BaseEnumerator(IterativeBinaryNodeVisitor<TNode> holder)
+			protected BaseEnumerator(IterativeBinaryNodeVisitor<TNode>  visitor)
 			{
 				_current = null;
-				_pointer = holder._start;
-				_holder = holder;
+				_start = visitor.StartNode;
+				_pointer = visitor.StartNode;
+				_nodes = visitor._nodes;
 			}
 
 			/// <summary>
@@ -138,7 +132,8 @@ namespace TraverseTree.Core.Models
 
 			protected TNode _current;
 			protected TNode _pointer;
-			protected IterativeBinaryNodeVisitor<TNode> _holder;
+			protected readonly TNode _start;
+			protected readonly ICollectionDecorator<TNode> _nodes;
 		}
 
 		/// <summary>
@@ -157,12 +152,12 @@ namespace TraverseTree.Core.Models
 				{
 					while (!_pointer.IsNull())
 					{
-						StoredNodes.Put(_pointer);
+						_nodes.Put(_pointer);
 						_pointer = _pointer.Left;
 					}
 				}
 
-				_pointer = StoredNodes.Get();
+				_pointer = _nodes.Get();
 				_current = _pointer;
 				_pointer = _pointer.Right;
 			}
@@ -179,14 +174,14 @@ namespace TraverseTree.Core.Models
 			{
 				if (_pointer.IsNull())
 				{
-					_pointer = StoredNodes.Get();
+					_pointer = _nodes.Get();
 				}
 
 				_current = _pointer;
 
 				if (!_pointer.Right.IsNull())
 				{
-					StoredNodes.Put(_pointer.Right);
+					_nodes.Put(_pointer.Right);
 				}
 
 				_pointer = _pointer.Left;
@@ -233,23 +228,23 @@ namespace TraverseTree.Core.Models
 
 			protected override void AdvanceNext()
 			{
-				if (StoredNodes.IsEmpty() && _current.IsNull()) {
-					StoredNodes.Put(_pointer);
+				if (_nodes.IsEmpty() && _current.IsNull()) {
+					_nodes.Put(_pointer);
 				}
 
-				_pointer = StoredNodes.Get();
+				_pointer = _nodes.Get();
 
 				if (!_pointer.Left.IsNull()) {
-					StoredNodes.Put(_pointer.Left);
+					_nodes.Put(_pointer.Left);
 				}
 
 				if (!_pointer.Right.IsNull()) {
-					StoredNodes.Put(_pointer.Right);
+					_nodes.Put(_pointer.Right);
 				}
 
 				_current = _pointer;
 
-				if (StoredNodes.IsEmpty() && _pointer.IsLeaf()) {
+				if (_nodes.IsEmpty() && _pointer.IsLeaf()) {
 					_pointer = null;
 				}
 			}
