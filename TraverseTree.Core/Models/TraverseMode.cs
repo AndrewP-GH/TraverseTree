@@ -22,7 +22,7 @@ namespace TraverseTree.Core.Models
 		/// <summary>
 		/// Visit at first left node, than right node and current node.
 		/// </summary>
-		[Description("Обход в обрвтном порядке")]
+		[Description("Обход в обратном порядке")]
 		Postorder,
 
 		/// <summary>

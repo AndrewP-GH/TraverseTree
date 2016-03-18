@@ -13,6 +13,33 @@ namespace TraverseTree.Core.Models
 	public class BinaryTreeNode<TKey, TValue> : KeyValueNode<TKey, TValue>, IBinaryHierarchical<BinaryTreeNode<TKey, TValue>>
 	{
 		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TNode"></typeparam>
+		/// <param name="node"></param>
+		/// <returns></returns>
+		public bool IsLeaf =>
+			Right.IsNull() && Left.IsNull();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TNode"></typeparam>
+		/// <param name="node"></param>
+		/// <returns></returns>
+		public bool HasLeftOnly =>
+			!Left.IsNull() && Right.IsNull();
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TNode"></typeparam>
+		/// <param name="node"></param>
+		/// <returns></returns>
+		public bool HasRightOnly =>
+			Left.IsNull() && !Right.IsNull();
+
+		/// <summary>
 		/// Get's or set's the left node from current
 		/// </summary>
 		public BinaryTreeNode<TKey, TValue> Left { get; set; }
@@ -115,47 +142,5 @@ namespace TraverseTree.Core.Models
 			Right = null;
 			Parent = null;
 		}
-
-		/// <summary>
-		/// Create's node with only left child
-		/// </summary>
-		/// <param name="key">The key for this node</param>
-		/// <param name="value">The value for this node</param>
-		/// <param name="leftKey">The key for left node</param>
-		/// <param name="leftData">The value for left node</param>
-		/// <returns>Binary node with only left child</returns>
-		public static BinaryTreeNode<TKey, TValue> LeftOnly(TKey key, TValue value, TKey leftKey, TValue leftData)
-			=> LeftOnly(key, value, new BinaryTreeNode<TKey, TValue>(leftKey, leftData));
-
-		/// <summary>
-		/// Create's node with only left child
-		/// </summary>
-		/// <param name="key">The key for this node</param>
-		/// <param name="value">The value for this node</param>
-		/// <param name="left">The left node</param>
-		/// <returns>Binary node with only left child</returns>
-		public static BinaryTreeNode<TKey, TValue> LeftOnly(TKey key, TValue value, BinaryTreeNode<TKey, TValue> left)
-			=> new BinaryTreeNode<TKey, TValue>(key, value, left, null);
-
-		/// <summary>
-		/// Create's node with only right child
-		/// </summary>
-		/// <param name="key">The key for this node</param>
-		/// <param name="value">The value for this node</param>
-		/// <param name="rightKey">The key for right node</param>
-		/// <param name="rightData">The value for right node</param>
-		/// <returns>Binary node with only right child</returns>
-		public static BinaryTreeNode<TKey, TValue> RightOnly(TKey key, TValue value, TKey rightKey, TValue rightData)
-			=> RightOnly(key, value, new BinaryTreeNode<TKey, TValue>(rightKey, rightData));
-
-		/// <summary>
-		/// Create's node with only right child
-		/// </summary>
-		/// <param name="key">The key for this node</param>
-		/// <param name="value">The value for this node</param>
-		/// <param name="right">the right node</param>
-		/// <returns>Binary node with only right child</returns>
-		public static BinaryTreeNode<TKey, TValue> RightOnly(TKey key, TValue value, BinaryTreeNode<TKey, TValue> right)
-			=> new BinaryTreeNode<TKey, TValue>(key, value, null, right);
 	}
 }

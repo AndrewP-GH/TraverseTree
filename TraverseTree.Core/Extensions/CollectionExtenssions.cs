@@ -7,7 +7,7 @@ namespace TraverseTree.Core.Extensions
 	/// <summary>
 	/// 
 	/// </summary>
-	internal static class CollectionExtennsions
+	public static class CollectionExtennsions
 	{
 		/// <summary>
 		/// 
@@ -28,7 +28,7 @@ namespace TraverseTree.Core.Extensions
 	/// <summary>
 	/// Extenssion class for <see cref="IList{T}"/>
 	/// </summary>
-	internal static class ListExtenssions
+	public static class ListExtenssions
 	{
 		/// <summary>
 		/// Perform fast method for <see cref="System.Linq.Enumerable.Select{TSource, TResult}(IEnumerable{TSource}, Func{TSource, TResult})"/>.

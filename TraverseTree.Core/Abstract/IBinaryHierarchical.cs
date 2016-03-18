@@ -10,21 +10,21 @@ namespace TraverseTree.Core.Abstract
 	/// 
 	/// </summary>
 	/// <typeparam name="THierarchical"></typeparam>
-	public interface IBinaryHierarchical<out THierarchical> where THierarchical : IBinaryHierarchical<THierarchical>
+	public interface IBinaryHierarchical<THierarchical> where THierarchical : IBinaryHierarchical<THierarchical>
 	{
 		/// <summary>
 		/// 
 		/// </summary>
-		THierarchical Left { get; }
+		THierarchical Left { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		THierarchical Right { get; }
+		THierarchical Right { get; set; }
 
 		/// <summary>
 		/// 
 		/// </summary>
-		THierarchical Parent { get; }
+		THierarchical Parent { get; set; }
 	}
 }

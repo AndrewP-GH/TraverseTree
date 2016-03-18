@@ -38,7 +38,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Abstract\IBinaryHierarchical.cs" />
-    <Compile Include="Abstract\IBinarySearchTree.cs" />
     <Compile Include="Abstract\IBinaryTree.cs" />
     <Compile Include="Abstract\ICollectionDecorator.cs" />
     <Compile Include="Abstract\IKeyValueNode.cs" />

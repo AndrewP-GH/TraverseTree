@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using TraverseTree.Core.Abstract;
 using TraverseTree.Core.Extensions;
 
@@ -14,7 +12,7 @@ namespace TraverseTree.Core.Models
 	/// </summary>
 	/// <typeparam name="TKey">Key for search, must be Comparable: <see cref="IComparable{TKey}"/></typeparam>
 	/// <typeparam name="TValue">Value for associated key</typeparam>
-	public class BinarySearchTree<TKey, TValue> : IBinarySearchTree<TKey, TValue, BinaryTreeNode<TKey, TValue>>
+	public class BinarySearchTree<TKey, TValue> : IBinaryOrderedTree<TKey, TValue, BinaryTreeNode<TKey, TValue>> 
 		where TKey : IComparable<TKey> 
 	{
 		/// <summary>
@@ -112,7 +110,7 @@ namespace TraverseTree.Core.Models
 		/// <param name="keyComparer"><seealso cref="IComparable{T}"/></param>
 		public BinarySearchTree(IComparer<TKey> keyComparer) : 
 			this(null, keyComparer, EqualityComparer<TValue>.Default) { }
-		
+
 		/// <summary>
 		/// Create instance of BST with specified root node and key comparer
 		/// </summary>
@@ -164,7 +162,7 @@ namespace TraverseTree.Core.Models
 		/// <param name="value"></param>
 		public void Add(TKey key, TValue value)
 		{
-			BinaryTreeNode<TKey, TValue> createdNode = new BinaryTreeNode<TKey, TValue>(key, value);
+			BinaryTreeNode<TKey, TValue> createdNode = CreateNode(key, value);
 			BinaryTreeNode<TKey, TValue> current = Root, parent = null;
 
 			while (!current.IsNull())
@@ -202,7 +200,7 @@ namespace TraverseTree.Core.Models
 				throw new ArgumentNullException(nameof(item));
 			}
 
-			if (item.IsLeaf()) {
+			if (item.IsLeaf) {
 				Add(item.Key, item.Value);
 			} 
 			else
@@ -369,10 +367,19 @@ namespace TraverseTree.Core.Models
 		/// 
 		/// </summary>
 		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <returns></returns>
+		protected virtual BinaryTreeNode<TKey, TValue> CreateNode(TKey key, TValue value)
+			=> new BinaryTreeNode<TKey, TValue>(key, value);
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="key"></param>
 		/// <param name="mode"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		private List<BinaryTreeNode<TKey, TValue>> FindOrRemoveAllInternal (TKey key, SearchingMode mode, TValue value = default(TValue))
+		protected List<BinaryTreeNode<TKey, TValue>> FindOrRemoveAllInternal (TKey key, SearchingMode mode, TValue value = default(TValue))
 		{
 			List<BinaryTreeNode<TKey, TValue>> nodes =
 				new List<BinaryTreeNode<TKey, TValue>>();
@@ -411,7 +418,7 @@ namespace TraverseTree.Core.Models
 		/// <param name="value"></param>
 		/// <param name="searchBy"></param>
 		/// <returns></returns>
-		private BinaryTreeNode<TKey, TValue> FindFromInternal(BinaryTreeNode<TKey, TValue> current, TKey key, SearchingMode mode, TValue value = default(TValue))
+		protected BinaryTreeNode<TKey, TValue> FindFromInternal(BinaryTreeNode<TKey, TValue> current, TKey key, SearchingMode mode, TValue value = default(TValue))
 		{
 			bool searchNext = true;
 			do
@@ -445,16 +452,16 @@ namespace TraverseTree.Core.Models
 		/// </summary>
 		/// <param name="node"></param>
 		/// <param name="parent"></param>
-		private BinaryTreeNode<TKey, TValue> ExcludeNodeInternal(BinaryTreeNode<TKey, TValue> node)
+		protected BinaryTreeNode<TKey, TValue> ExcludeNodeInternal(BinaryTreeNode<TKey, TValue> node)
 		{
 			BinaryTreeNode<TKey, TValue> next = null;
 
-			if (node.IsLeaf())
+			if (node.IsLeaf)
 			{
 				// if node hasn't child, just remove it
 				node.Parent.DetachChild(node);
 			}
-			else if (node.HasLeftOnly())
+			else if (node.HasLeftOnly)
 			{
 				// if node has only left child, then replace it:
 				// node -> parent -> (left || right) with node -> left
@@ -463,7 +470,7 @@ namespace TraverseTree.Core.Models
 				node.Left.Parent = node.Parent;
 				next = node.Left;
 			}
-			else if (node.HasRightOnly())
+			else if (node.HasRightOnly)
 			{
 				// if node has only right child, then replace it:
 				// node -> parent -> (left || right) with node -> right
@@ -521,7 +528,7 @@ namespace TraverseTree.Core.Models
 		/// <summary>
 		/// Helper enum
 		/// </summary>
-		private enum SearchingMode : byte
+		protected enum SearchingMode : byte
 		{
 			/// <summary>
 			/// Remove or find by key

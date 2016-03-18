@@ -6,7 +6,8 @@ namespace TraverseTree.Core.Abstract
 	/// 
 	/// </summary>
 	/// <typeparam name="TNode"></typeparam>
-	public interface IBinaryTree<TNode> : ICollection<TNode> where TNode : IBinaryHierarchical<TNode>
+	public interface IBinaryOrderedTree<TKey, TValue, TNode> : ICollection<TNode> 
+		where TNode : IBinaryHierarchical<TNode>, IKeyValueNode<TKey, TValue>
 	{
 		/// <summary>
 		/// 

@@ -6,7 +6,7 @@ namespace TraverseTree.Core.Extensions
 	/// <summary>
 	/// Extension class for generic
 	/// </summary>
-	internal static class GenericExtenssions
+	public static class GenericExtenssions
 	{
 		/// <summary>
 		/// Perform compare with null without boxing-unboxing
