@@ -4,9 +4,20 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TraverseTree.Visual"
+		xmlns:vv="clr-namespace:TraverseTree.Visual.Views"
         mc:Ignorable="d"
 		WindowStartupLocation="CenterScreen"
         Title="MainWindow" Height="800" Width="1280">
+	<Window.Resources>
+		<ResourceDictionary>
+			<DataTemplate x:Key="TreeView">
+				<vv:TreeView></vv:TreeView>
+			</DataTemplate>
+			<DataTemplate x:Key="Stack">
+				<vv:StackView></vv:StackView>
+			</DataTemplate>
+		</ResourceDictionary>
+	</Window.Resources>
 	<DockPanel >
 		<Menu DockPanel.Dock="Top" FontSize="15">
 			<MenuItem Header="Файл">
@@ -14,7 +25,6 @@
 				<MenuItem Header="Выход" Command="{Binding Path= CloseCommand}" Cursor="Hand" />
 				<MenuItem Header="Сгенерировать" Command="{Binding Path= GenerateTreeCommand}" Cursor="Hand" />
 				<MenuItem Header="Обойти" Command="{Binding Path= TraverseTreeCommand}" Cursor="Hand" />
-
 			</MenuItem>
 		</Menu>
 		<Grid>
@@ -22,26 +32,26 @@
 				<ColumnDefinition Width="450" />
 				<ColumnDefinition Width="450" />
 				<ColumnDefinition Width="*" />
-				<ColumnDefinition Width="*"/>
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
 				<RowDefinition Height="79*" />
 				<RowDefinition Height="28*" />
 			</Grid.RowDefinitions>
 
-			<ScrollViewer Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Visible" HorizontalScrollBarVisibility="Visible">
-				<Canvas Width="900" Height="550" >
-					<Canvas.Children>
-						<Ellipse Fill="Red" Width="200" Height="200" Canvas.Left="-100" Canvas.Top="200" ></Ellipse>
-					</Canvas.Children>
-				</Canvas>
-			</ScrollViewer>
+			<ContentControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
+							Content="{Binding Path = TreeViewModel }"
+							ContentTemplate="{StaticResource ResourceKey = TreeView}">
+			</ContentControl>
 
-			<StackPanel Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2"
-						Orientation="Horizontal">
-				<TextBox Width="200" MaxHeight="20"></TextBox>
-				<Button ></Button>
+			<StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
+				<TextBox Width="100" MaxHeight="20"></TextBox>
+				<Button Width="30" Height="20"></Button>
 			</StackPanel>
+
+			<ContentControl Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0"
+							Content="{Binding Path = StackViewModel }"
+							ContentTemplate="{StaticResource ResourceKey=Stack}">
+			</ContentControl>
 		</Grid>
 	</DockPanel>
 </Window>

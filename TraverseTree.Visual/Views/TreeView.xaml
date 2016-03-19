@@ -6,7 +6,20 @@
              xmlns:local="clr-namespace:TraverseTree.Visual.Views"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid>
-            
-    </Grid>
+	<ScrollViewer>
+		<Canvas Background="Aqua">
+			<ItemsControl ItemsSource="{Binding Path = Collection}">
+				<ItemsControl.ItemsPanel>
+					<ItemsPanelTemplate>
+						<Canvas Background="White" Width="100" Height="100"></Canvas>
+					</ItemsPanelTemplate>
+				</ItemsControl.ItemsPanel>
+				<ItemsControl.ItemTemplate>
+					<DataTemplate>
+						<Ellipse Width="{Binding Path = Radius}" Height="{Binding Path = Radius}"></Ellipse>
+					</DataTemplate>
+				</ItemsControl.ItemTemplate>
+			</ItemsControl>
+		</Canvas>
+	</ScrollViewer>
 </UserControl>
