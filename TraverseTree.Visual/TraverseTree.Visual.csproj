@@ -55,6 +55,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\SelectionMode.cs" />
+    <Compile Include="Models\VisualBinaryTreeNode.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -98,7 +100,9 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Controls\" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\TraverseTree.Core\TraverseTree.Core.csproj">
       <Project>{af7515cd-2f22-4e3e-b1cd-c0a7c3d64f0c}</Project>

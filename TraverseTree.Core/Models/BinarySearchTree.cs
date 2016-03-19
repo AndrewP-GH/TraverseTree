@@ -15,6 +15,8 @@ namespace TraverseTree.Core.Models
 	public class BinarySearchTree<TKey, TValue> : IBinaryOrderedTree<TKey, TValue, BinaryTreeNode<TKey, TValue>> 
 		where TKey : IComparable<TKey> 
 	{
+		public delegate BinaryTreeNode<TKey, TValue> BinaryNodeCreator(TKey key, TValue value);
+
 		/// <summary>
 		/// Represents the root of BST
 		/// </summary>
@@ -95,33 +97,42 @@ namespace TraverseTree.Core.Models
 		/// <summary>
 		/// Create empty instance of BST
 		/// </summary>
-		public BinarySearchTree() { }
+		public BinarySearchTree() : 
+			this(null, Comparer<TKey>.Default, EqualityComparer<TValue>.Default, (k, v) => new BinaryTreeNode<TKey, TValue>(k, v)) { }
+
+		public BinarySearchTree(Func<BinaryTreeNode<TKey, TValue>> creator) :
+			this(null, Comparer<TKey>.Default, EqualityComparer<TValue>.Default, (k, v) => new BinaryTreeNode<TKey, TValue>(k, v)) { }
 
 		/// <summary>
 		/// Create instance of BST with specified root node
 		/// </summary>
 		/// <param name="root"><see cref="BinaryTreeNode{TKey, TValue}"/></param>
 		public BinarySearchTree(BinaryTreeNode<TKey, TValue> root) : 
-			this(root, Comparer<TKey>.Default, EqualityComparer<TValue>.Default) { }
+			this(root, Comparer<TKey>.Default, EqualityComparer<TValue>.Default, (k,v) => new BinaryTreeNode<TKey, TValue>(k, v)) { }
 
 		/// <summary>
 		/// Create instance of BST with specified key comparer
 		/// </summary>
 		/// <param name="keyComparer"><seealso cref="IComparable{T}"/></param>
 		public BinarySearchTree(IComparer<TKey> keyComparer) : 
-			this(null, keyComparer, EqualityComparer<TValue>.Default) { }
+			this(null, keyComparer, EqualityComparer<TValue>.Default, (k,v) => new BinaryTreeNode<TKey, TValue>(k,v)) { }
 
 		/// <summary>
 		/// Create instance of BST with specified root node and key comparer
 		/// </summary>
 		/// <param name="root"></param>
 		/// <param name="keyComparer"></param>
-		public BinarySearchTree(BinaryTreeNode<TKey, TValue> root, IComparer<TKey> keyComparer, IEqualityComparer<TValue> valueComparer)
+		public BinarySearchTree(BinaryTreeNode<TKey, TValue> root, IComparer<TKey> keyComparer, IEqualityComparer<TValue> valueComparer, BinaryNodeCreator creator)
 		{
+			if (creator.IsNull()) {
+				throw new ArgumentNullException(nameof(creator));
+			}
+
 			Root = root;
 			KeyComparer = keyComparer;
 			ValueComparer = valueComparer;
 			Count = IsEmpty ? 0 : 1;
+			_creator = creator;
 		}
 
 		/// <summary>
@@ -162,7 +173,7 @@ namespace TraverseTree.Core.Models
 		/// <param name="value"></param>
 		public void Add(TKey key, TValue value)
 		{
-			BinaryTreeNode<TKey, TValue> createdNode = CreateNode(key, value);
+			var createdNode = _creator(key, value);
 			BinaryTreeNode<TKey, TValue> current = Root, parent = null;
 
 			while (!current.IsNull())
@@ -367,19 +378,10 @@ namespace TraverseTree.Core.Models
 		/// 
 		/// </summary>
 		/// <param name="key"></param>
-		/// <param name="value"></param>
-		/// <returns></returns>
-		protected virtual BinaryTreeNode<TKey, TValue> CreateNode(TKey key, TValue value)
-			=> new BinaryTreeNode<TKey, TValue>(key, value);
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="key"></param>
 		/// <param name="mode"></param>
 		/// <param name="value"></param>
 		/// <returns></returns>
-		protected List<BinaryTreeNode<TKey, TValue>> FindOrRemoveAllInternal (TKey key, SearchingMode mode, TValue value = default(TValue))
+		private List<BinaryTreeNode<TKey, TValue>> FindOrRemoveAllInternal (TKey key, SearchingMode mode, TValue value = default(TValue))
 		{
 			List<BinaryTreeNode<TKey, TValue>> nodes =
 				new List<BinaryTreeNode<TKey, TValue>>();
@@ -418,7 +420,7 @@ namespace TraverseTree.Core.Models
 		/// <param name="value"></param>
 		/// <param name="searchBy"></param>
 		/// <returns></returns>
-		protected BinaryTreeNode<TKey, TValue> FindFromInternal(BinaryTreeNode<TKey, TValue> current, TKey key, SearchingMode mode, TValue value = default(TValue))
+		private BinaryTreeNode<TKey, TValue> FindFromInternal(BinaryTreeNode<TKey, TValue> current, TKey key, SearchingMode mode, TValue value = default(TValue))
 		{
 			bool searchNext = true;
 			do
@@ -452,7 +454,7 @@ namespace TraverseTree.Core.Models
 		/// </summary>
 		/// <param name="node"></param>
 		/// <param name="parent"></param>
-		protected BinaryTreeNode<TKey, TValue> ExcludeNodeInternal(BinaryTreeNode<TKey, TValue> node)
+		private BinaryTreeNode<TKey, TValue> ExcludeNodeInternal(BinaryTreeNode<TKey, TValue> node)
 		{
 			BinaryTreeNode<TKey, TValue> next = null;
 
@@ -528,7 +530,7 @@ namespace TraverseTree.Core.Models
 		/// <summary>
 		/// Helper enum
 		/// </summary>
-		protected enum SearchingMode : byte
+		private enum SearchingMode : byte
 		{
 			/// <summary>
 			/// Remove or find by key
@@ -572,5 +574,7 @@ namespace TraverseTree.Core.Models
 		}
 
 		#endregion
+
+		private readonly BinaryNodeCreator _creator;
 	}
 }

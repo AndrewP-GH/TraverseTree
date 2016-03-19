@@ -31,21 +31,6 @@ namespace TraverseTree.Visual.ViewModels
 		/// </summary>
 		public ICommand GenerateTreeCommand { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public ICollectionDecorator<BinaryTreeNode<int, string>> NodeCollection
-		{
-			get { return _collection; }
-			set
-			{
-				if (_collection != value)
-				{
-					_collection = value;
-					base.OnPropertyChanged(nameof(NodeCollection));
-				}
-			}
-		}
 
 		/// <summary>
 		/// 
@@ -68,21 +53,23 @@ namespace TraverseTree.Visual.ViewModels
 		/// </summary>
 		public MainViewModel()
 		{
-			_tree = new BinarySearchTree<int, string>();
+			
 		}
 
-		private void OnGenerateTree ()
+		protected void CreateNode ()
 		{
-
+			// Create Visual Node
+			// Insert node to tree
+			// Add node to observable collection
 		}
 
-		private void ChangeTraverseOrder()
+		protected void TraverseTree ()
 		{
-
+			// Create visitor with observable stack
+			// foreach ()
+			// 
 		}
 
 		private TraverseMode _traverseOrder;
-		private ICollectionDecorator<BinaryTreeNode<int, string>> _collection;
-		private readonly BinarySearchTree<int, string> _tree;
 	}
 }

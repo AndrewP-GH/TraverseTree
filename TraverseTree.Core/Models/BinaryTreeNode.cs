@@ -39,6 +39,8 @@ namespace TraverseTree.Core.Models
 		public bool HasRightOnly =>
 			Left.IsNull() && !Right.IsNull();
 
+		public int Height { get; protected set; }
+
 		/// <summary>
 		/// Get's or set's the left node from current
 		/// </summary>
@@ -52,7 +54,24 @@ namespace TraverseTree.Core.Models
 		/// <summary>
 		/// Get's or set's the parent node from current
 		/// </summary>
-		public BinaryTreeNode<TKey, TValue> Parent { get; set; }
+		public BinaryTreeNode<TKey, TValue> Parent
+		{
+			get { return _parent; }
+			set
+			{
+				if (value.IsNull())
+				{
+					Height = 0;
+				}
+				else
+				{
+					Height = 1 + value.Height;
+				}
+
+				_parent = value;
+			}
+		}
+		private BinaryTreeNode<TKey, TValue> _parent;
 
 		/// <summary>
 		/// Get the most left node from current

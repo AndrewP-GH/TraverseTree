@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using TraverseTree.Core.Models;
 
 namespace TraverseTree.Core.Extensions
