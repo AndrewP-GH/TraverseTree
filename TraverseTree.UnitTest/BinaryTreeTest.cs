@@ -8,6 +8,15 @@ using TraverseTree.Core.Extensions;
 
 namespace TraverseTree.UnitTest
 {
+	internal class NodeCreator<TKey, TValue> where TKey: IComparable<TKey>
+	{
+		public BinaryTreeNode<TKey, TValue> Create(TKey key, TValue value) =>
+			new BinaryTreeNode<TKey, TValue>(key, value);
+
+		public IEnumerable<BinaryTreeNode<TKey, TValue>> CreateRange(IEnumerable<KeyValuePair<TKey, TValue>> pairs) =>
+			pairs.Select(x => new BinaryTreeNode<TKey, TValue>(x.Key, x.Value));
+	}
+
 	[TestClass]
 	public class BinaryNodeTest
 	{
@@ -43,30 +52,32 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTest_CreateAdd()
 		{
 			/// Arrange
+			NodeCreator<string, string> creator = new NodeCreator<string, string>();
 			BinarySearchTree<string, string> tree = new BinarySearchTree<string, string>();
 
 			/// Act-Assert
 			Assert.AreEqual(tree.IsEmpty, true);
-			tree.Add("1", "1");
+			tree.Add(creator.Create("1", "1"));
 			Assert.AreEqual(tree.IsEmpty, false);
 
 			/// Act-Assert
-			tree.Add("2", "2");
-			tree.Add("3", "3");
-			tree.Add("4", "4");
-			tree.Add("5", "5");
+			tree.Add(creator.Create("2", "2"));
+			tree.Add(creator.Create("3", "3"));
+			tree.Add(creator.Create("4", "4"));
+			tree.Add(creator.Create("5", "5"));
 
 			Assert.AreEqual(tree.Count, 5);
 
 			/// Act-Assert
-			tree.AddRange(new KeyValuePair<string, string>[]
+			tree.AddRange(creator.CreateRange(
+				new KeyValuePair<string, string>[]
 				{
 					new KeyValuePair<string, string>("5", "5"),
 					new KeyValuePair<string, string>("4", "4"),
 					new KeyValuePair<string, string>("3", "3"),
 					new KeyValuePair<string, string>("2", "2"),
 					new KeyValuePair<string, string>("1", "1")
-				}
+				})
 			);
 
 			Assert.AreEqual(tree.Count, 10);
@@ -77,9 +88,11 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTest_FindContainHeight()
 		{
 			/// Arrange
+			NodeCreator<string, string> creator = new NodeCreator<string, string>();
 			BinarySearchTree<string, string> tree = new BinarySearchTree<string, string>();
 
-			tree.AddRange(new KeyValuePair<string, string>[]
+			tree.AddRange(creator.CreateRange(
+				new KeyValuePair<string, string>[]
 				{
 					new KeyValuePair<string, string>("5", "5"),
 					new KeyValuePair<string, string>("5", "5"),
@@ -98,7 +111,7 @@ namespace TraverseTree.UnitTest
 					new KeyValuePair<string, string>("3", "3"),
 					new KeyValuePair<string, string>("2", "2"),
 					new KeyValuePair<string, string>("1", "1")
-				}
+				})
 			);
 
 			/// Act
@@ -127,9 +140,11 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTest_Remove()
 		{
 			/// Arrange
+			NodeCreator<int, string> creator = new NodeCreator<int, string>();
 			BinarySearchTree<int, string> tree = new BinarySearchTree<int, string>();
 
-			tree.AddRange(new KeyValuePair<int, string>[]
+			tree.AddRange(creator.CreateRange(
+				new KeyValuePair<int, string>[]
 				{
 					new KeyValuePair<int, string>(15, "5"),
 					new KeyValuePair<int, string>(5, "5"),
@@ -145,7 +160,7 @@ namespace TraverseTree.UnitTest
 					new KeyValuePair<int, string>(20, "3"),
 					new KeyValuePair<int, string>(18, "2"),
 					new KeyValuePair<int, string>(23, "1")
-				}
+				})
 			);
 
 			try
@@ -190,9 +205,11 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTest_Clear()
 		{
 			/// Arrange
+			NodeCreator<int, string> creator = new NodeCreator<int, string>();
 			BinarySearchTree<int, string> tree = new BinarySearchTree<int, string>();
 
-			tree.AddRange(new KeyValuePair<int, string>[]
+			tree.AddRange(creator.CreateRange(
+				new KeyValuePair<int, string>[]
 				{
 					new KeyValuePair<int, string>(15, "5"),
 					new KeyValuePair<int, string>(5, "5"),
@@ -208,7 +225,7 @@ namespace TraverseTree.UnitTest
 					new KeyValuePair<int, string>(20, "3"),
 					new KeyValuePair<int, string>(18, "2"),
 					new KeyValuePair<int, string>(23, "1")
-				}
+				})
 			);
 
 			/// Act
@@ -228,9 +245,10 @@ namespace TraverseTree.UnitTest
 
 		public BinaryTreeTraverse()
 		{
+			NodeCreator<int, string> creator = new NodeCreator<int, string>();
 			_tree = new BinarySearchTree<int, string>();
 
-			_tree.AddRange(new KeyValuePair<int, string>[]
+			_tree.AddRange(creator.CreateRange(new KeyValuePair<int, string>[]
 				{
 					new KeyValuePair<int, string>(15, "5"),
 					new KeyValuePair<int, string>(5, "5"),
@@ -246,7 +264,7 @@ namespace TraverseTree.UnitTest
 					new KeyValuePair<int, string>(20, "3"),
 					new KeyValuePair<int, string>(18, "2"),
 					new KeyValuePair<int, string>(23, "1")
-				}
+				})
 			);
 
 		}

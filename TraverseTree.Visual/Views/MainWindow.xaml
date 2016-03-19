@@ -12,6 +12,9 @@
 			<MenuItem Header="Файл">
 				<MenuItem Header="О программе" Command="{Binding Path=AboutCommand}" Cursor="Hand" />
 				<MenuItem Header="Выход" Command="{Binding Path= CloseCommand}" Cursor="Hand" />
+				<MenuItem Header="Сгенерировать" Command="{Binding Path= GenerateTreeCommand}" Cursor="Hand" />
+				<MenuItem Header="Обойти" Command="{Binding Path= TraverseTreeCommand}" Cursor="Hand" />
+
 			</MenuItem>
 		</Menu>
 		<Grid>

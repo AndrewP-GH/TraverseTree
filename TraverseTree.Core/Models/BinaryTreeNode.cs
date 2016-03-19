@@ -13,7 +13,7 @@ namespace TraverseTree.Core.Models
 	public class BinaryTreeNode<TKey, TValue> : KeyValueNode<TKey, TValue>, IBinaryHierarchical<BinaryTreeNode<TKey, TValue>>
 	{
 		/// <summary>
-		/// 
+		/// Indicates, that node contain children
 		/// </summary>
 		/// <typeparam name="TNode"></typeparam>
 		/// <param name="node"></param>
@@ -22,7 +22,7 @@ namespace TraverseTree.Core.Models
 			Right.IsNull() && Left.IsNull();
 
 		/// <summary>
-		/// 
+		/// Indicates, that node contain only left child
 		/// </summary>
 		/// <typeparam name="TNode"></typeparam>
 		/// <param name="node"></param>
@@ -31,7 +31,7 @@ namespace TraverseTree.Core.Models
 			!Left.IsNull() && Right.IsNull();
 
 		/// <summary>
-		/// 
+		/// Indicates, that node contain only right child
 		/// </summary>
 		/// <typeparam name="TNode"></typeparam>
 		/// <param name="node"></param>
@@ -39,39 +39,39 @@ namespace TraverseTree.Core.Models
 		public bool HasRightOnly =>
 			Left.IsNull() && !Right.IsNull();
 
-		public int Height { get; protected set; }
-
 		/// <summary>
 		/// Get's or set's the left node from current
 		/// </summary>
-		public BinaryTreeNode<TKey, TValue> Left { get; set; }
+		public virtual BinaryTreeNode<TKey, TValue> Left { get; set; }
 
 		/// <summary>
 		/// Get's or set's the right node from current
 		/// </summary>
-		public BinaryTreeNode<TKey, TValue> Right { get; set; }
+		public virtual BinaryTreeNode<TKey, TValue> Right { get; set; }
 
 		/// <summary>
 		/// Get's or set's the parent node from current
 		/// </summary>
-		public BinaryTreeNode<TKey, TValue> Parent
+		public virtual BinaryTreeNode<TKey, TValue> Parent
 		{
-			get { return _parent; }
+			get
+			{
+				return _parent;
+			}
 			set
 			{
-				if (value.IsNull())
-				{
-					Height = 0;
-				}
-				else
-				{
-					Height = 1 + value.Height;
-				}
-
 				_parent = value;
+
+				if (_parent.IsNull())
+				{
+					_y = _x = 0;
+				} else
+				{
+					_y = 1 + _parent._y;
+					_x = _parent._x + ( ( this == _parent.Left ) ? -1 : 1 );
+				}
 			}
 		}
-		private BinaryTreeNode<TKey, TValue> _parent;
 
 		/// <summary>
 		/// Get the most left node from current
@@ -151,15 +151,9 @@ namespace TraverseTree.Core.Models
 			Right = right;
 			Parent = parent;
 		}
-		
-		/// <summary>
-		/// Set's left and right children to null
-		/// </summary>
-		public void Detach ()
-		{
-			Left = null;
-			Right = null;
-			Parent = null;
-		}
+
+		protected BinaryTreeNode<TKey, TValue> _parent;
+		protected int _x;
+		protected int _y;
 	}
 }

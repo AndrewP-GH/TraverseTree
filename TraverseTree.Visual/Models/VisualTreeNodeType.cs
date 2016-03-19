@@ -9,21 +9,26 @@ namespace TraverseTree.Visual.Models
 	/// <summary>
 	/// Node selection state
 	/// </summary>
-	public enum SelectionMode
+	public enum VisualTreeNodeType
 	{
 		/// <summary>
-		/// Node selected
+		/// 
 		/// </summary>
-		Selected,
+		Hidden,
 
 		/// <summary>
-		/// Node added to tree
+		/// Node created and inserted to tree
 		/// </summary>
-		Posted,
+		InsertedToTree,
 
 		/// <summary>
-		/// Node free
+		/// Node added to stack 
 		/// </summary>
-		Free
+		InsertedForTraverse,
+
+		/// <summary>
+		/// Node selected while traversing
+		/// </summary>
+		Active
 	}
 }

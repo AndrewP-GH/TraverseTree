@@ -55,7 +55,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Models\SelectionMode.cs" />
+    <Compile Include="Abstract\IBinaryNodeGenerator.cs" />
+    <Compile Include="Models\KeyDistributionType.cs" />
+    <Compile Include="Models\ObservableStack.cs" />
+    <Compile Include="Models\UniformBinaryNodeGenerator.cs" />
+    <Compile Include="Models\VisualTreeNodeType.cs" />
     <Compile Include="Models\VisualBinaryTreeNode.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Page Include="Views\MainWindow.xaml">
@@ -68,6 +72,8 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ViewModels\StackViewModel.cs" />
+    <Compile Include="ViewModels\TreeViewModel.cs" />
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

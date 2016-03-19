@@ -61,5 +61,18 @@ namespace TraverseTree.Core.Extensions
 			node.Left.Parent = parent;
 			node.Right.Parent = parent;
 		}
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <typeparam name="TKey"></typeparam>
+		/// <typeparam name="TValue"></typeparam>
+		/// <param name="node"></param>
+		internal static void Detach<TKey, TValue>(this BinaryTreeNode<TKey, TValue>  node)
+		{
+			node.Left = null;
+			node.Right = null;
+			node.Parent = null;
+		}
 	}
 }

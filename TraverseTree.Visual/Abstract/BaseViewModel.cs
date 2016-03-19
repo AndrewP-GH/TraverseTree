@@ -15,15 +15,8 @@ namespace TraverseTree.Visual.Abstract
 		/// <summary>
 		/// Fire, when proprty changed
 		/// </summary>
-		/// <param name="propertyName"></param>
-		protected virtual void OnPropertyChanged(string propertyName)
-		{
-			PropertyChangedEventHandler handler = PropertyChanged;
-
-			if (handler != null)
-			{
-				handler(this, new PropertyChangedEventArgs(propertyName));
-			}
-		}
+		/// <param name="property"></param>
+		protected virtual void OnPropertyChanged(string property) =>
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property));
 	}
 }
