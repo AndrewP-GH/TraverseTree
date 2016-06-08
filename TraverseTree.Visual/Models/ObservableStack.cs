@@ -12,32 +12,32 @@ namespace TraverseTree.Visual.Models
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 
 		#region ICollection properties
-		private ICollection Collection => _collection;
+		private ICollection Collection => _stack;
 
 		bool ICollection.IsSynchronized => Collection.IsSynchronized;
 
 		object ICollection.SyncRoot => Collection.SyncRoot;
 		#endregion
 
-		public int Count => _collection.Count;
+		public int Count => _stack.Count;
 
 		public ObservableStack()
 		{
-			_collection = new Stack<T>();
+			_stack = new Stack<T>();
 		}
 		public ObservableStack(int capacity)
 		{
-			_collection = new Stack<T>(capacity);
+			_stack = new Stack<T>(capacity);
 		}
 		public ObservableStack(IEnumerable<T> collection)
 		{
-			_collection = new Stack<T>(collection);
+			_stack = new Stack<T>(collection);
 		}
 
 		#region IEnumerable
-		public IEnumerator<T> GetEnumerator() => _collection.GetEnumerator();
+		public IEnumerator<T> GetEnumerator() => _stack.GetEnumerator();
 
-		IEnumerator IEnumerable.GetEnumerator() => _collection.GetEnumerator();
+		IEnumerator IEnumerable.GetEnumerator() => _stack.GetEnumerator();
 		#endregion
 
 		#region ICollection methods
@@ -48,26 +48,26 @@ namespace TraverseTree.Visual.Models
 		public void Put (T item)
 		{
 			item.NullGuard(nameof(item));
-			_collection.Push(item);
+			_stack.Push(item);
 
 			OnCollectionChanged(NotifyCollectionChangedAction.Add, item);
 		}
 
 		public T Get ()
 		{
-			T item = _collection.Pop();
+			T item = _stack.Pop();
 
 			OnCollectionChanged(NotifyCollectionChangedAction.Remove, item);
 
 			return item;
 		}
 
-		public T Top => _collection.Peek();
+		public T Top => _stack.Peek();
 
 		public void Clear ()
 		{
-			OnCollectionChanged(NotifyCollectionChangedAction.Remove, _collection.ToArray());
-			_collection.Clear();
+			OnCollectionChanged(NotifyCollectionChangedAction.Remove, _stack.ToArray());
+			_stack.Clear();
 		}
 		#endregion
 
@@ -77,6 +77,6 @@ namespace TraverseTree.Visual.Models
 		protected virtual void OnCollectionChanged(NotifyCollectionChangedAction action, T[] items) =>
 			CollectionChanged?.Invoke(this, new NotifyCollectionChangedEventArgs(action, items));
 
-		private readonly Stack<T> _collection;
+		private readonly Stack<T> _stack;
 	}
 }

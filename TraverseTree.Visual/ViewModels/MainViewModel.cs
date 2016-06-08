@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+
 using TraverseTree.Core.Abstract;
 using TraverseTree.Core.Extensions;
 using TraverseTree.Core.Models;
@@ -15,9 +16,6 @@ using TraverseTree.Visual.Interfaces;
 
 namespace TraverseTree.Visual.ViewModels
 {
-	/// <summary>
-	/// 
-	/// </summary>
 	public class MainViewModel : ObservableObject
 	{
 		public TreeViewModel TreeViewModel { get; set; }

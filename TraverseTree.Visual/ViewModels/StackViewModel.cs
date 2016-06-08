@@ -16,59 +16,20 @@ namespace TraverseTree.Visual.ViewModels
 	{
 		public int MaximumHeight
 		{
-			get
-			{
-				return _maximumHeight;
-			}
-
-			set
-			{
-				if (_maximumHeight == value)
-				{
-					return;
-				}
-
-				_maximumHeight = value;
-				OnPropertyChanged(nameof(MaximumHeight));
-			}
+			get { return _maximumHeight; }
+			set { UpdateValue(ref _maximumHeight, value, nameof(MaximumHeight)); }
 		}
 
 		public int ExpectedHeight
 		{
-			get
-			{
-				return _expectedHeight;
-			}
-
-			set
-			{
-				if (_expectedHeight == value)
-				{
-					return;
-				}
-
-				_expectedHeight = value;
-				OnPropertyChanged(nameof(ExpectedHeight));
-			}
+			get { return _expectedHeight; }
+			set { UpdateValue(ref _expectedHeight, value, nameof(ExpectedHeight)); }
 		}
 
 		public int ActualHeight
 		{
-			get
-			{
-				return _actualHeight;
-			}
-
-			set
-			{
-				if (_actualHeight == value)
-				{
-					return;
-				}
-
-				_actualHeight = value;
-				OnPropertyChanged(nameof(ActualHeight));
-			}
+			get { return _actualHeight; }
+			set { UpdateValue(ref _actualHeight, value, nameof(ActualHeight)); }
 		}
 
 		public ObservableStack<BinaryTreeNode<int, string>> Collection => _collection;
