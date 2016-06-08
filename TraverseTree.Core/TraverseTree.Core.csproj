@@ -47,6 +47,7 @@
     <Compile Include="Extensions\BinaryTreeNodeExtenssions.cs" />
     <Compile Include="Extensions\CollectionExtenssions.cs" />
     <Compile Include="Extensions\EnumerableExtenssions.cs" />
+    <Compile Include="Extensions\EnumHelper.cs" />
     <Compile Include="Extensions\GenericExtenssions.cs" />
     <Compile Include="Extensions\HierarchicalExtenssions.cs" />
     <Compile Include="Extensions\KeyValueNodeExtenssions.cs" />

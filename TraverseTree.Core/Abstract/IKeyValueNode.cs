@@ -1,15 +1,10 @@
-﻿namespace TraverseTree.Core.Abstract
+﻿using System;
+
+namespace TraverseTree.Core.Abstract
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <typeparam name="TKey"></typeparam>
-	/// <typeparam name="TValue"></typeparam>
-	public interface IKeyValueNode<out TKey, out TValue> : INode<TValue>
+	public interface IKeyValueNode<out TKey, out TValue> : INode<TValue> 
+		where TKey: IComparable<TKey>
 	{
-		/// <summary>
-		/// 
-		/// </summary>
 		TKey Key { get; }
 	}
 }

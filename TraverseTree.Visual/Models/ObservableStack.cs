@@ -12,19 +12,10 @@ namespace TraverseTree.Visual.Models
 		public event NotifyCollectionChangedEventHandler CollectionChanged;
 
 		#region ICollection properties
-		/// <summary>
-		/// 
-		/// </summary>
 		private ICollection Collection => _collection;
 
-		/// <summary>
-		/// 
-		/// </summary>
 		bool ICollection.IsSynchronized => Collection.IsSynchronized;
 
-		/// <summary>
-		/// 
-		/// </summary>
 		object ICollection.SyncRoot => Collection.SyncRoot;
 		#endregion
 
@@ -44,48 +35,24 @@ namespace TraverseTree.Visual.Models
 		}
 
 		#region IEnumerable
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		public IEnumerator<T> GetEnumerator() => _collection.GetEnumerator();
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		IEnumerator IEnumerable.GetEnumerator() => _collection.GetEnumerator();
 		#endregion
 
 		#region ICollection methods
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="array"></param>
-		/// <param name="index"></param>
 		void ICollection.CopyTo(Array array, int index) => Collection.CopyTo(array, index);
 		#endregion
 
 		#region Collection decorator
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="item"></param>
 		public void Put (T item)
 		{
-			if (item.IsNull()) {
-				throw new ArgumentNullException(nameof(item));
-			}
-
+			item.NullGuard(nameof(item));
 			_collection.Push(item);
 
 			OnCollectionChanged(NotifyCollectionChangedAction.Add, item);
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		public T Get ()
 		{
 			T item = _collection.Pop();
@@ -95,22 +62,12 @@ namespace TraverseTree.Visual.Models
 			return item;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <returns></returns>
 		public T Top => _collection.Peek();
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public void Clear ()
 		{
-			T[] items = _collection.ToArray();
-
+			OnCollectionChanged(NotifyCollectionChangedAction.Remove, _collection.ToArray());
 			_collection.Clear();
-
-			OnCollectionChanged(NotifyCollectionChangedAction.Remove, items);
 		}
 		#endregion
 

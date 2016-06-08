@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using TraverseTree.Core.Abstract;
@@ -16,31 +18,24 @@ namespace TraverseTree.Visual.ViewModels
 	/// <summary>
 	/// 
 	/// </summary>
-	public class MainViewModel : BaseViewModel
+	public class MainViewModel : ObservableObject
 	{
 		public TreeViewModel TreeViewModel { get; set; }
 
 		public StackViewModel StackViewModel { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
+		public string[] TraversalOrders =>
+			EnumHelper.Descriptions<TraverseMode>();
+
+		public string[] KeyDistributions =>
+			EnumHelper.Descriptions<KeyDistributionType>();
+
 		public TraverseMode TraverseOrder { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public KeyDistributionType KeyDistributionType { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		public int MaximumCount { get; set; } = 100;
+		public int MaximumCount { get; set; } = 70;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		// TODO: Calculate expect count 
 		public int ExpectedCount
 		{
 			get
@@ -49,29 +44,14 @@ namespace TraverseTree.Visual.ViewModels
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public ICommand CloseCommand { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public ICommand AboutCommand { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public ICommand GenerateTreeCommand { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public ICommand TraverseTreeCommand { get; set; }
 
-		/// <summary>
-		/// 
-		/// </summary>
 		public MainViewModel()
 		{
 			_tree = new BinarySearchTree<int, string>();
@@ -80,11 +60,14 @@ namespace TraverseTree.Visual.ViewModels
 
 			GenerateTreeCommand = new RelayCommand(GenerateTree);
 			TraverseTreeCommand = new RelayCommand(TraverseTree);
+
+			GenerateTree(null);
 		}
 
 		protected void GenerateTree (object arg)
 		{
 			_tree.Clear();
+			TreeViewModel.Collection.Clear();
 
 			StackViewModel.MaximumHeight = MaximumCount;
 			StackViewModel.ExpectedHeight = ExpectedCount;
@@ -107,6 +90,7 @@ namespace TraverseTree.Visual.ViewModels
 			foreach (VisualBinaryTreeNode<int, string> visual in visitor)
 			{
 				visual.TreeNodeType = VisualTreeNodeType.Active;
+				visual.TreeNodeType = VisualTreeNodeType.InsertedToTree;
 			}
 		}
 

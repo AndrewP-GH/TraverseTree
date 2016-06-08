@@ -1,30 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace TraverseTree.Core.Abstract
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <typeparam name="THierarchical"></typeparam>
-	public interface IBinaryHierarchical<THierarchical> where THierarchical : IBinaryHierarchical<THierarchical>
+	public interface IBinaryHierarchical<out THierarchical> where THierarchical : IBinaryHierarchical<THierarchical>
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		THierarchical Left { get; set; }
+		THierarchical Left { get; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		THierarchical Right { get; set; }
+		THierarchical Right { get; }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		THierarchical Parent { get; set; }
+		THierarchical Parent { get; }
 	}
 }

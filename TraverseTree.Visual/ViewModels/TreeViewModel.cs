@@ -10,7 +10,7 @@ using TraverseTree.Visual.Models;
 
 namespace TraverseTree.Visual.ViewModels
 {
-	public class TreeViewModel : BaseViewModel
+	public class TreeViewModel : ObservableObject
 	{
 		public ObservableCollection<VisualBinaryTreeNode<int, string>> Collection => _collection;
 

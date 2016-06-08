@@ -2,17 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using TraverseTree.Core.Abstract;
 using TraverseTree.Core.Extensions;
 
 namespace TraverseTree.Core.Models
 {
-	/// <summary>
-	/// Represent iterative binary tree visitor; implements <see cref="IBinaryNodeVisitor{TNode}"/>
-	/// </summary>
-	/// <typeparam name="TNode"></typeparam>
 	public class IterativeBinaryNodeVisitor<TNode> : IBinaryNodeVisitor<TNode> where TNode : class, IBinaryHierarchical<TNode>
 	{
 		public TNode StartNode { get; set; }
@@ -28,64 +23,43 @@ namespace TraverseTree.Core.Models
 		public IterativeBinaryNodeVisitor(TNode startNode, ICollectionDecorator<TNode> stack) :
 			this(startNode, stack, TraverseMode.Inorder) { }
 
-		public IterativeBinaryNodeVisitor(TNode startNode, ICollectionDecorator<TNode> stack, TraverseMode traverseMode)
+		public IterativeBinaryNodeVisitor(TNode startNode, ICollectionDecorator<TNode> decorator, TraverseMode traverseMode)
 		{
-			if (startNode.IsNull()) {
-				throw new ArgumentNullException(nameof(startNode));
-			}
-
-			if (stack.IsNull()) {
-				throw new ArgumentNullException(nameof(stack));
-			}
+			startNode.NullGuard(nameof(startNode));
+			decorator.NullGuard(nameof(decorator));
 
 			StartNode = startNode;
-			_nodes = stack;
 			TraverseMode = traverseMode;
+			_nodes = decorator;
 		}
 
 		IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 
 		public IEnumerator<TNode> GetEnumerator()
 		{
-			if (TraverseMode == TraverseMode.Inorder) {
-				return new InorderEnumerator(this);
-			} else if (TraverseMode == TraverseMode.Postorder) {
-				return new PostorderEnumerator(this);
-			} else if (TraverseMode == TraverseMode.Leverorder) {
-				return new LevelorderEnumerator(this);
+			switch (TraverseMode)
+			{
+				case TraverseMode.Inorder:
+					return new InorderEnumerator(this);
+				case TraverseMode.Postorder:
+					return new PostorderEnumerator(this);
+				case TraverseMode.Leverorder:
+					return new LevelorderEnumerator(this);
+				default:
+					return new PreorderEnumerator(this);
 			}
-			
-			return new PreorderEnumerator(this);
 		}
 
 		private readonly ICollectionDecorator<TNode> _nodes;
 
-		/// <summary>
-		/// 
-		/// </summary>
 		internal abstract class BaseEnumerator : IEnumerator<TNode>
 		{
-			/// <summary>
-			/// 
-			/// </summary>
 			object IEnumerator.Current => Current;
 
-			/// <summary>
-			/// 
-			/// </summary>
 			public TNode Current => _current;
 
-			/// <summary>
-			/// 
-			/// </summary>
-			public virtual void Dispose()
-			{
-				Reset();
-			}
+			public virtual void Dispose() => Reset();
 			
-			/// <summary>
-			/// 
-			/// </summary>
 			public virtual void Reset()
 			{
 				_current = null;
@@ -93,16 +67,9 @@ namespace TraverseTree.Core.Models
 				_nodes.Clear();
 			} 
 
-			/// <summary>
-			/// Advanse enumerator in the next element to the collection
-			/// </summary>
-			/// <returns>
-			/// True if the enumerator was successfully advanced to the next element; 
-			/// false if the enumerator has passed the end of the collection.
-			/// </returns>
 			public bool MoveNext()
 			{
-				bool stop = ( !_nodes.IsEmpty() || !_pointer.IsNull() );
+				bool stop = ( _nodes.Count > 0 || !_pointer.IsNull() );
 
 				if (stop) {
 					AdvanceNext();
@@ -113,10 +80,6 @@ namespace TraverseTree.Core.Models
 				return stop;
 			}
 
-			/// <summary>
-			/// 
-			/// </summary>
-			/// <param name="holder"></param>
 			protected BaseEnumerator(IterativeBinaryNodeVisitor<TNode>  visitor)
 			{
 				_current = null;
@@ -125,9 +88,6 @@ namespace TraverseTree.Core.Models
 				_nodes = visitor._nodes;
 			}
 
-			/// <summary>
-			/// Implement's in derived classes
-			/// </summary>
 			protected abstract void AdvanceNext();
 
 			protected TNode _current;
@@ -136,16 +96,10 @@ namespace TraverseTree.Core.Models
 			protected readonly ICollectionDecorator<TNode> _nodes;
 		}
 
-		/// <summary>
-		/// Represent Inorder traverse
-		/// </summary>
-		internal class InorderEnumerator : BaseEnumerator
+		internal sealed class InorderEnumerator : BaseEnumerator
 		{
 			public InorderEnumerator(IterativeBinaryNodeVisitor<TNode> holder) : base(holder) { }
 
-			/// <summary>
-			/// Inorder traversal
-			/// </summary>
 			protected override void AdvanceNext()
 			{
 				if (!_pointer.IsNull())
@@ -163,10 +117,7 @@ namespace TraverseTree.Core.Models
 			}
 		}
 
-		/// <summary>
-		/// Represent Preorder traverse
-		/// </summary>
-		internal class PreorderEnumerator : BaseEnumerator
+		internal sealed class PreorderEnumerator : BaseEnumerator
 		{
 			public PreorderEnumerator(IterativeBinaryNodeVisitor<TNode> holder) : base(holder) { }
 
@@ -188,11 +139,8 @@ namespace TraverseTree.Core.Models
 			}
 		}
 
-		/// <summary>
-		/// Represent Postorder traverse
-		/// </summary>
 		// TODO: Implenent postorder traversal
-		internal class PostorderEnumerator : BaseEnumerator
+		internal sealed class PostorderEnumerator : BaseEnumerator
 		{
 			public PostorderEnumerator(IterativeBinaryNodeVisitor<TNode> holder) : base(holder) { }
 
@@ -219,10 +167,7 @@ namespace TraverseTree.Core.Models
 			}
 		}
 
-		/// <summary>
-		/// Represent right Level order traverse
-		/// </summary>
-		internal class LevelorderEnumerator : BaseEnumerator
+		internal sealed class LevelorderEnumerator : BaseEnumerator
 		{
 			public LevelorderEnumerator(IterativeBinaryNodeVisitor<TNode> holder) : base(holder) { }
 

@@ -56,6 +56,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Abstract\IBinaryNodeGenerator.cs" />
+    <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Models\KeyDistributionType.cs" />
     <Compile Include="Models\ObservableStack.cs" />
     <Compile Include="Models\UniformBinaryNodeGenerator.cs" />
@@ -72,7 +73,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Abstract\BaseViewModel.cs" />
+    <Compile Include="Abstract\ObservableObject.cs" />
     <Compile Include="Interfaces\RelayCommand.cs" />
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>

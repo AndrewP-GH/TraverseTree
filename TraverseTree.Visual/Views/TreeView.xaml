@@ -4,22 +4,40 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TraverseTree.Visual.Views"
+			 xmlns:cvs="clr-namespace:TraverseTree.Visual.Converters"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
+	<UserControl.Resources>
+		<ResourceDictionary>
+			<cvs:TreeNodeColorConverter x:Key="TypeToColorConverter" />
+		</ResourceDictionary>
+	</UserControl.Resources>
+	
 	<ScrollViewer>
-		<Canvas Background="Aqua">
-			<ItemsControl ItemsSource="{Binding Path = Collection}">
-				<ItemsControl.ItemsPanel>
-					<ItemsPanelTemplate>
-						<Canvas Background="White" Width="100" Height="100"></Canvas>
-					</ItemsPanelTemplate>
-				</ItemsControl.ItemsPanel>
-				<ItemsControl.ItemTemplate>
-					<DataTemplate>
-						<Ellipse Width="{Binding Path = Radius}" Height="{Binding Path = Radius}"></Ellipse>
-					</DataTemplate>
-				</ItemsControl.ItemTemplate>
-			</ItemsControl>
-		</Canvas>
+		<ItemsControl ItemsSource="{Binding Path=Collection}">
+			<ItemsControl.ItemsPanel>
+				<ItemsPanelTemplate>
+					<Canvas Background="Yellow"></Canvas>
+				</ItemsPanelTemplate>
+			</ItemsControl.ItemsPanel>
+			<ItemsControl.ItemContainerStyle>
+				<Style TargetType="ContentPresenter">
+					<Setter Property="Canvas.Left" Value="{Binding Path= XPos}" />
+					<Setter Property="Canvas.Top" Value="{Binding Path= CoordY}" />
+				</Style>
+			</ItemsControl.ItemContainerStyle>
+			<ItemsControl.ItemTemplate>
+				<DataTemplate>
+					<Canvas>
+						<Ellipse Width="{Binding Path= Diameter}" Height="{Binding Path= Diameter}"
+								 Fill="{Binding Path= TreeNodeType, Converter= {StaticResource TypeToColorConverter}}">
+						</Ellipse>
+						<!--<Line X1="{Binding Path=BeginEdgeX}" Y1="{Binding Path=BeginEdgeY}" X2="{Binding Path=EndLeftEdgeX}" Y2="{Binding Path=EndEdgeY}" Stroke="Black"/>-->
+						<!--<Line X1="{Binding Path=BeginEdgeX}" Y1="{Binding Path=BeginEdgeY}" X2="{Binding Path=EndRightEdgeX}" Y2="{Binding Path=EndEdgeY}" Stroke="Black"/>-->
+						<!--<TextBlock Text="{Binding Path= Key}" />-->
+					</Canvas>
+				</DataTemplate>
+			</ItemsControl.ItemTemplate>
+		</ItemsControl>
 	</ScrollViewer>
 </UserControl>

@@ -2,13 +2,12 @@
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using TraverseTree.Core.Abstract;
 using TraverseTree.Core.Models;
 using TraverseTree.Core.Extensions;
 
 namespace TraverseTree.UnitTest
 {
-	internal class NodeCreator<TKey, TValue> where TKey: IComparable<TKey>
+	internal sealed class NodeCreator<TKey, TValue> where TKey: IComparable<TKey>
 	{
 		public BinaryTreeNode<TKey, TValue> Create(TKey key, TValue value) =>
 			new BinaryTreeNode<TKey, TValue>(key, value);
@@ -82,6 +81,7 @@ namespace TraverseTree.UnitTest
 
 			Assert.AreEqual(tree.Count, 10);
 			Assert.AreEqual(tree.Root.RecursiveCount(), tree.Count);
+			Assert.AreEqual(tree.Height, tree.Root.RecursiveHeight());
 		}
 
 		[TestMethod]
@@ -134,6 +134,7 @@ namespace TraverseTree.UnitTest
 			Assert.AreEqual(results[2], true);
 			Assert.AreEqual(results[3], false);
 			Assert.AreEqual(height, 7);
+			Assert.AreEqual(tree.Height, tree.Root.RecursiveHeight());
 		}
 
 		[TestMethod]
@@ -174,31 +175,37 @@ namespace TraverseTree.UnitTest
 			/// Act-Assert
 			Assert.AreEqual(tree.Count, 14);
 			Assert.AreEqual(tree.Count, tree.Root.RecursiveCount());
+			Assert.AreEqual(tree.Height, tree.Root.RecursiveHeight());
 
 			/// Act-Assert
 			tree.RemoveAt(13);
 			Assert.AreEqual(tree.Count, 13);
 			Assert.AreEqual(tree.Count, tree.Root.RecursiveCount());
+			Assert.AreEqual(tree.Height, tree.Root.RecursiveHeight());
 
 			/// Act-Assert
 			tree.RemoveAt(3);
 			Assert.AreEqual(tree.Count, 12);
 			Assert.AreEqual(tree.Count, tree.Root.RecursiveCount());
+			Assert.AreEqual(tree.Height, tree.Root.RecursiveHeight());
 
 			/// Act-Assert
 			tree.RemoveAt(16);
 			Assert.AreEqual(tree.Count, 10);
 			Assert.AreEqual(tree.Count, tree.Root.RecursiveCount());
+			Assert.AreEqual(tree.Height, tree.Root.RecursiveHeight());
 
 			/// Act-Assert
 			tree.RemoveAt(5);
 			Assert.AreEqual(tree.Count, 9);
 			Assert.AreEqual(tree.Count, tree.Root.RecursiveCount());
+			Assert.AreEqual(tree.Height, tree.Root.RecursiveHeight());
 
 			/// Act-Assert
 			tree.RemoveAt(15);
 			Assert.AreEqual(tree.Count, 8);
 			Assert.AreEqual(tree.Count, tree.Root.RecursiveCount());
+			Assert.AreEqual(tree.Height, tree.Root.RecursiveHeight());
 		}
 
 		[TestMethod]
@@ -231,6 +238,7 @@ namespace TraverseTree.UnitTest
 			/// Act
 			long before = GC.GetTotalMemory(true);
 			tree.Clear();
+
 			long after = GC.GetTotalMemory(true);
 
 			/// Assert
@@ -273,8 +281,7 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTraverse_Inorder()
 		{
 			/// Arrange
-			IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> visitor = 
-				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>>(_tree.Root);
+			var visitor = _tree.GetEnumerator(TraverseMode.Inorder);
 
 			/// Act
 			foreach(var pair in visitor)
@@ -298,8 +305,7 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTraverse_Preorder()
 		{
 			/// Arrange
-			IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> visitor =
-				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> (_tree.Root, TraverseMode.Preorder);
+			var visitor = _tree.GetEnumerator(TraverseMode.Preorder);
 
 			/// Act
 			foreach (var pair in visitor)
@@ -323,8 +329,7 @@ namespace TraverseTree.UnitTest
 		public void BinaryTreeTraverse_Postorder()
 		{
 			/// Arrange
-			IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> visitor =
-				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>>(_tree.Root, TraverseMode.Postorder);
+			var visitor = _tree.GetEnumerator(TraverseMode.Postorder);
 
 			/// Act
 			foreach (var pair in visitor)
@@ -347,9 +352,7 @@ namespace TraverseTree.UnitTest
 		[TestMethod]
 		public void BinaryTreeTraverse_Levelorder()
 		{
-			IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>> visitor =
-				new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>>(_tree.Root, TraverseMode.Leverorder);
-
+			var visitor = _tree.GetEnumerator(TraverseMode.Leverorder);
 			/// Act
 			foreach (var pair in visitor)
 			{

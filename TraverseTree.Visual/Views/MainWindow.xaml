@@ -29,29 +29,39 @@
 		</Menu>
 		<Grid>
 			<Grid.ColumnDefinitions>
-				<ColumnDefinition Width="450" />
-				<ColumnDefinition Width="450" />
-				<ColumnDefinition Width="*" />
+				<ColumnDefinition Width="*" MinWidth="500" />
+				<ColumnDefinition Width="*" MaxWidth="120" />
+				<ColumnDefinition Width="*" MaxWidth="120" />
 			</Grid.ColumnDefinitions>
 			<Grid.RowDefinitions>
-				<RowDefinition Height="79*" />
-				<RowDefinition Height="28*" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" MinHeight="200" />
 			</Grid.RowDefinitions>
 
-			<ContentControl Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2"
-							Content="{Binding Path = TreeViewModel }"
-							ContentTemplate="{StaticResource ResourceKey = TreeView}">
+			<ContentControl Grid.Row="0" Grid.Column="0"
+							Content="{Binding Path= TreeViewModel }"
+							ContentTemplate="{StaticResource ResourceKey= TreeView}">
 			</ContentControl>
-
-			<StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal">
-				<TextBox Width="100" MaxHeight="20"></TextBox>
-				<Button Width="30" Height="20"></Button>
-			</StackPanel>
-
 			<ContentControl Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0"
-							Content="{Binding Path = StackViewModel }"
-							ContentTemplate="{StaticResource ResourceKey=Stack}">
+							Content="{Binding Path= StackViewModel }"
+							ContentTemplate="{StaticResource ResourceKey= Stack}">
 			</ContentControl>
+
+			<StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
+				<StackPanel Margin="0 20 0 20">
+					<Label  Content="Выберите распределение ключей: " />
+					<ComboBox ItemsSource="{Binding Path=TraversalOrders}" SelectedIndex="0" />
+				</StackPanel>
+
+				<StackPanel Margin="0 20 0 20">
+					<Label  Content="Выберите порядок обхода: " />
+					<ComboBox ItemsSource="{Binding Path=KeyDistributions}" SelectedIndex="0"/>
+				</StackPanel>
+
+				<StackPanel Margin="0 20 0 20">
+					<ComboBox ItemsSource="{Binding Temp}" SelectedIndex="0" Width="200" />
+				</StackPanel>
+			</StackPanel>
 		</Grid>
 	</DockPanel>
 </Window>

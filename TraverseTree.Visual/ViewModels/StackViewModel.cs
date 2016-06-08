@@ -12,7 +12,7 @@ using TraverseTree.Visual.Models;
 
 namespace TraverseTree.Visual.ViewModels
 {
-	public class StackViewModel : BaseViewModel
+	public class StackViewModel : ObservableObject
 	{
 		public int MaximumHeight
 		{

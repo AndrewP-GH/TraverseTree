@@ -3,20 +3,10 @@ using TraverseTree.Core.Models;
 
 namespace TraverseTree.Core.Extensions
 {
-	/// <summary>
-	/// Extenssion class for <see cref="BinaryTreeNode{TKey, TValue}"/>
-	/// </summary>
-	public static class BinaryTreeNodeExtenssions
+	internal static class BinaryTreeNodeExtenssions
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="TKey"></typeparam>
-		/// <typeparam name="TValue"></typeparam>
-		/// <param name="parent"></param>
-		/// <param name="old"></param>
-		/// <param name="next"></param>
 		internal static void ReplaceChild<TKey, TValue>(this BinaryTreeNode<TKey, TValue> parent, BinaryTreeNode<TKey, TValue> old, BinaryTreeNode<TKey, TValue> next)
+			where TKey : IComparable<TKey>
 		{
 			if (Object.ReferenceEquals(parent.Left, old)) {
 				parent.Left = next;
@@ -25,50 +15,27 @@ namespace TraverseTree.Core.Extensions
 			}
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="TKey"></typeparam>
-		/// <typeparam name="TValue"></typeparam>
-		/// <param name="parent"></param>
-		/// <param name="child"></param>
-		internal static void DetachChild<TKey, TValue>(this BinaryTreeNode<TKey, TValue> parent, BinaryTreeNode<TKey, TValue> child) =>
-			parent.ReplaceChild(child, null);
+		internal static void DetachChild<TKey, TValue>(this BinaryTreeNode<TKey, TValue> parent, BinaryTreeNode<TKey, TValue> child)
+			where TKey : IComparable<TKey> => 
+				parent.ReplaceChild(child, null);
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="TKey"></typeparam>
-		/// <typeparam name="TValue"></typeparam>
-		/// <param name="node"></param>
-		/// <param name="next"></param>
-		internal static void ChangeRelations<TKey, TValue> (this BinaryTreeNode<TKey, TValue> node, BinaryTreeNode<TKey, TValue> next)
+		internal static void ChangeRelations<TKey, TValue> (this BinaryTreeNode<TKey, TValue> node, BinaryTreeNode<TKey, TValue> next) 
+			where TKey : IComparable<TKey>
 		{
 			node.Left = next.Left;
 			node.Right = next.Right;
 			node.Parent = next.Parent;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="TKey"></typeparam>
-		/// <typeparam name="TValue"></typeparam>
-		/// <param name="node"></param>
-		/// <param name="parent"></param>
 		internal static void SetParentForChildren<TKey, TValue>(this BinaryTreeNode<TKey, TValue> node, BinaryTreeNode<TKey, TValue> parent)
+			where TKey : IComparable<TKey>
 		{
 			node.Left.Parent = parent;
 			node.Right.Parent = parent;
 		}
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <typeparam name="TKey"></typeparam>
-		/// <typeparam name="TValue"></typeparam>
-		/// <param name="node"></param>
-		internal static void Detach<TKey, TValue>(this BinaryTreeNode<TKey, TValue>  node)
+		internal static void Detach<TKey, TValue>(this BinaryTreeNode<TKey, TValue> node)
+			where TKey : IComparable<TKey>
 		{
 			node.Left = null;
 			node.Right = null;

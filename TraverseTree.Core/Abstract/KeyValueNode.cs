@@ -3,38 +3,19 @@ using TraverseTree.Core.Extensions;
 
 namespace TraverseTree.Core.Abstract
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <typeparam name="TKey"></typeparam>
-	/// <typeparam name="TValue"></typeparam>
 	public abstract class KeyValueNode<TKey, TValue> : Node<TValue>, IKeyValueNode<TKey, TValue>
+		where TKey: IComparable<TKey>
 	{
-		/// <summary>
-		/// 
-		/// </summary>
-		public TKey Key { get; }
+		public TKey Key => _key;
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="key"></param>
-		/// <param name="value"></param>
 		protected KeyValueNode(TKey key, TValue value) : base(value)
 		{
-			if (key.IsNull())
-			{
-				throw new ArgumentNullException(nameof(value));
-			}
-
-			Key = key;
+			key.NullGuardAssign(out _key, nameof(Key));
 		}
 
-		/// <summary>
-		/// Get's string representation from this node
-		/// </summary>
-		/// <returns>String, formatted as follows:[ Key {Key}; Value {Value} ]</returns>
 		public override string ToString() =>
-			String.Format("[ Key : {0}; Value : {1} ]", Key, Value);
+			$"[ Key : {Key}; Value : {Value} ]";
+
+		private readonly TKey _key;
 	}
 }

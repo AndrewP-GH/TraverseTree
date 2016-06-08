@@ -1,17 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace TraverseTree.Core.Abstract
 {
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <typeparam name="TNode"></typeparam>
 	public interface IBinaryOrderedTree<TKey, TValue, TNode> : ICollection<TNode> 
-		where TNode : IBinaryHierarchical<TNode>, IKeyValueNode<TKey, TValue>
+		where TNode: IBinaryHierarchical<TNode>, IKeyValueNode<TKey, TValue>
+		where TKey: IComparable<TKey>
 	{
-		/// <summary>
-		/// 
-		/// </summary>
 		TNode Root { get; }
 	}
 }
