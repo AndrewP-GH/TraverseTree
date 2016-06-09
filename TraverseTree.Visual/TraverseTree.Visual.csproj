@@ -62,6 +62,7 @@
     <Compile Include="Models\UniformBinaryNodeGenerator.cs" />
     <Compile Include="Models\VisualTreeNodeType.cs" />
     <Compile Include="Models\VisualBinaryTreeNode.cs" />
+    <Compile Include="Models\ViewData.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\StackView.xaml.cs">
       <DependentUpon>StackView.xaml</DependentUpon>

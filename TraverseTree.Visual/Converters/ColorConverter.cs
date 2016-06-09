@@ -53,4 +53,13 @@ namespace TraverseTree.Visual.Converters
 				brush.Color == Colors.MediumVioletRed ? VisualTreeNodeType.Active : VisualTreeNodeType.InsertedToTree;
 		}
 	}
+
+	internal sealed class EnumDescriptionConverter : IValueConverter
+	{
+		public object Convert(object value, Type targetType, object parameter, CultureInfo culture) =>
+			EnumHelper.Description(value.ToString(), ( (Enum)value ).GetType());
+
+		public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) =>
+			EnumHelper.ParseByDescription(value.ToString(), targetType);
+	}
 }

@@ -1,110 +1,101 @@
 ﻿using System;
-using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
-using TraverseTree.Core.Abstract;
 using TraverseTree.Core.Extensions;
 using TraverseTree.Core.Models;
 using TraverseTree.Visual.Abstract;
 using TraverseTree.Visual.Models;
 using TraverseTree.Visual.Interfaces;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace TraverseTree.Visual.ViewModels
 {
 	public class MainViewModel : ObservableObject
 	{
-		public TreeViewModel TreeViewModel { get; set; }
+		#region Commands
+		public ICommand CloseCommand { get; set; }
+		public ICommand AboutCommand { get; set; }
 
-		public StackViewModel StackViewModel { get; set; }
+		public ICommand GenerateTreeCommand { get; } 
+		public ICommand StartTraverseTreeCommand { get; }
+		public ICommand StopTraverseTreeCommand { get; }
 
-		public string[] TraversalOrders =>
+		#endregion
+
+		public string[] TraversalOrders { get; } =
 			EnumHelper.Descriptions<TraverseMode>();
 
-		public string[] KeyDistributions =>
+		public string[] KeyDistributions { get; } =
 			EnumHelper.Descriptions<KeyDistributionType>();
 
 		public TraverseMode TraverseOrder { get; set; }
 
 		public KeyDistributionType KeyDistributionType { get; set; }
 
-		public int MaximumCount { get; set; } = 70;
+		public string MaximumCount { get; set; }
 
-		public int ExpectedCount
-		{
-			get
-			{
-				return (int)Math.Round(Math.Sqrt(Math.PI * MaximumCount) - 1.5 + 11.0 * Math.Sqrt(Math.PI / MaximumCount * 1.0) / 24.0 + Math.Sqrt(1.0 / Math.Pow(MaximumCount, 3)) );
-			}
-		}
+		public TreeViewModel TreeViewModel { get; } =
+			new TreeViewModel();
 
-		public ICommand CloseCommand { get; set; }
-
-		public ICommand AboutCommand { get; set; }
-
-		public ICommand GenerateTreeCommand { get; set; }
-
-		public ICommand TraverseTreeCommand { get; set; }
+		public StackViewModel StackViewModel { get; } =
+			new StackViewModel();
 
 		public MainViewModel()
 		{
-			_tree = new BinarySearchTree<int, string>();
-			StackViewModel = new StackViewModel();
-			TreeViewModel = new TreeViewModel();
+			GenerateTreeCommand = new RelayCommand(OnTreeGeneration, OnValidateTreeGeneration);
+			StartTraverseTreeCommand = new RelayCommand(OnTreeTraverse);
 
-			GenerateTreeCommand = new RelayCommand(GenerateTree);
-			TraverseTreeCommand = new RelayCommand(TraverseTree);
-
-			GenerateTree(null);
+			TraverseOrder = TraverseMode.Inorder;
+			KeyDistributionType = KeyDistributionType.Uniform;
 		}
 
-		protected void GenerateTree (object arg)
+		private bool OnValidateTreeGeneration(object arg = null) =>
+			( Int32.TryParse(MaximumCount, out _maximumCount) && _maximumCount > 0 && _maximumCount < 10000 );
+
+		private void OnTreeGeneration (object arg = null)
+		{
+			Clear();
+
+			var generator = GetGenerator();
+
+			for(int i = 0; i < _maximumCount; ++i)
+			{
+				_tree.Add(generator.CreateNode());
+			}
+
+			TreeViewModel.UpdateState(_tree);
+		}
+
+		private void OnTreeTraverse (object arg)
+		{
+			GetVisitor().Each(node => 
+			{
+				node.Value.VisualType = VisualTreeNodeType.Active;
+				node.Value.VisualType = VisualTreeNodeType.InsertedToTree;
+			});
+		}
+
+		private void Clear()
 		{
 			_tree.Clear();
 			TreeViewModel.Collection.Clear();
-
-			StackViewModel.MaximumHeight = MaximumCount;
-			StackViewModel.ExpectedHeight = ExpectedCount;
-
-			IBinaryNodeGenerator<int, string> generator = GetGenerator();
-
-			for(int i = 0; i != MaximumCount; ++i)
-			{
-				VisualBinaryTreeNode<int, string> node = generator.CreateNode();
-
-				_tree.Add(node);
-
-				TreeViewModel.Collection.Add(node);
-			}
 		}
 
-		protected void TraverseTree (object arg)
-		{
-			var visitor = GetVisitor();
-			foreach (VisualBinaryTreeNode<int, string> visual in visitor)
-			{
-				visual.TreeNodeType = VisualTreeNodeType.Active;
-				visual.TreeNodeType = VisualTreeNodeType.InsertedToTree;
-			}
-		}
+		private IEnumerable<BinaryTreeNode<int, ViewData>> GetVisitor() =>
+			_tree.GetEnumerator(TraverseOrder, StackViewModel.Stack);
 
-		protected IBinaryNodeGenerator<int, string> GetGenerator()
+		private IBinaryNodeGenerator<int, ViewData> GetGenerator()
 		{
-			if (KeyDistributionType == KeyDistributionType.Uniform)
-			{
-				return new UniformBinaryNodeGenerator();
+			if (KeyDistributionType == KeyDistributionType.Uniform) {
+				return new FakeGenerator();
 			}
 
 			throw new ArgumentException("Invalid argument");
 		}
 
-		protected IBinaryNodeVisitor<BinaryTreeNode<int, string>> GetVisitor() =>
-			new IterativeBinaryNodeVisitor<BinaryTreeNode<int, string>>(_tree.Root, StackViewModel.Collection, TraverseOrder);
-
-		private readonly BinarySearchTree<int, string> _tree;
+		private int _maximumCount;
+		private BinarySearchTree<int, ViewData> _tree = new BinarySearchTree<int, ViewData>();
 	}
 }

@@ -363,11 +363,11 @@ namespace TraverseTree.UnitTest
 			var expected = new int[] { 15, 5, 16, 3, 12, 16, 2, 10, 13, 20, 6, 18, 23, 7 };
 
 			/// Assert
-			Assert.AreEqual(keys.Length, _tree.Count);
+			Assert.AreEqual(keys.Count(), _tree.Count);
 
 			for (int i = 0; i != expected.Length; i++)
 			{
-				Assert.AreEqual(expected[i], keys[i]);
+				Assert.AreEqual(expected[i], keys.ElementAt(i));
 			}
 		}
 	}

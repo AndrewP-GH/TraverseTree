@@ -5,9 +5,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TraverseTree.Visual"
 		xmlns:vv="clr-namespace:TraverseTree.Visual.Views"
+		xmlns:cvs="clr-namespace:TraverseTree.Visual.Converters"
         mc:Ignorable="d"
 		WindowStartupLocation="CenterScreen"
-        Title="MainWindow" Height="800" Width="1280">
+        Title="Аналитические методы анализа алгоритма обхода бинарного дерева" Height="800" Width="1280" FontSize="14">
 	<Window.Resources>
 		<ResourceDictionary>
 			<DataTemplate x:Key="TreeView">
@@ -16,15 +17,16 @@
 			<DataTemplate x:Key="Stack">
 				<vv:StackView></vv:StackView>
 			</DataTemplate>
+			<cvs:EnumDescriptionConverter x:Key="EnumConverter" />
 		</ResourceDictionary>
 	</Window.Resources>
-	<DockPanel >
-		<Menu DockPanel.Dock="Top" FontSize="15">
+	<DockPanel>
+		<Menu DockPanel.Dock="Top" FontSize="12">
 			<MenuItem Header="Файл">
 				<MenuItem Header="О программе" Command="{Binding Path=AboutCommand}" Cursor="Hand" />
+				<MenuItem Header="Справка" Command="{Binding Path=AboutCommand}" Cursor="Hand" />
+				<Separator />
 				<MenuItem Header="Выход" Command="{Binding Path= CloseCommand}" Cursor="Hand" />
-				<MenuItem Header="Сгенерировать" Command="{Binding Path= GenerateTreeCommand}" Cursor="Hand" />
-				<MenuItem Header="Обойти" Command="{Binding Path= TraverseTreeCommand}" Cursor="Hand" />
 			</MenuItem>
 		</Menu>
 		<Grid>
@@ -38,29 +40,60 @@
 				<RowDefinition Height="Auto" MinHeight="200" />
 			</Grid.RowDefinitions>
 
-			<ContentControl Grid.Row="0" Grid.Column="0"
+			<GroupBox Header="Визуализация обхода" Grid.Row="0" Grid.Column="0">
+				<ContentControl Margin="10"
 							Content="{Binding Path= TreeViewModel }"
 							ContentTemplate="{StaticResource ResourceKey= TreeView}">
-			</ContentControl>
-			<ContentControl Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0"
+				</ContentControl>
+			</GroupBox>
+					
+			<GroupBox Header="Визуализация работы стека стека" Grid.Row="1" Grid.ColumnSpan="3">
+				<ContentControl Margin="10"
 							Content="{Binding Path= StackViewModel }"
 							ContentTemplate="{StaticResource ResourceKey= Stack}">
-			</ContentControl>
-
+				</ContentControl>
+			</GroupBox>
+			
 			<StackPanel Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2">
-				<StackPanel Margin="0 20 0 20">
-					<Label  Content="Выберите распределение ключей: " />
-					<ComboBox ItemsSource="{Binding Path=TraversalOrders}" SelectedIndex="0" />
-				</StackPanel>
 
-				<StackPanel Margin="0 20 0 20">
-					<Label  Content="Выберите порядок обхода: " />
-					<ComboBox ItemsSource="{Binding Path=KeyDistributions}" SelectedIndex="0"/>
-				</StackPanel>
+				<GroupBox Margin="10 10 10 0" Header="Настройки">
+					<StackPanel>
+						<StackPanel Margin="5">
+							<Label  Content="Выберите распределение ключей: " />
+							<ComboBox ItemsSource="{Binding Path=TraversalOrders}" SelectedIndex="0" SelectedValue="{Binding Path= TraverseOrder, Converter= {StaticResource EnumConverter}}" />
+						</StackPanel>
+						<StackPanel Margin="5">
+							<Label  Content="Выберите порядок обхода: " />
+							<ComboBox ItemsSource="{Binding Path=KeyDistributions}" SelectedIndex="0" SelectedValue="{Binding Path= KeyDistributionType, Converter= {StaticResource EnumConverter}}"/>
+						</StackPanel>
+						<StackPanel Margin="5">
+							<Label  Content="Количество узлов: " />
+							<TextBox Text="{Binding Path= MaximumCount}"/>
+						</StackPanel>
+					</StackPanel>
+				</GroupBox>
 
-				<StackPanel Margin="0 20 0 20">
-					<ComboBox ItemsSource="{Binding Temp}" SelectedIndex="0" Width="200" />
-				</StackPanel>
+				<GroupBox Margin="10 10 10 0" Header="Теоретические расчеты:">
+					<StackPanel>
+						<StackPanel Margin="5">
+							<Label  Content="Максимальная высота дерева: " />
+							<TextBlock />
+						</StackPanel>
+						<StackPanel Margin="5">
+							<Label  Content="Максимальная глубина стека" />
+							<TextBlock />
+						</StackPanel>
+					</StackPanel>
+				</GroupBox>
+
+				<GroupBox Margin="10 10 10 0" Header="Действия">
+					<StackPanel >
+						<Button Margin="5" Content="Сгенерировать дерево" Command="{Binding Path= GenerateTreeCommand}" Cursor="Hand" />
+						<Button Margin="5" Content="Начать процедуру обхода" Command="{Binding Path= StartTraverseTreeCommand}" Cursor="Hand" />
+						<Button Margin="5" Content="Завершить процедуру обхода" Command="{Binding Path= StopTraverseTreeCommand}" Cursor="Hand" />
+					</StackPanel>
+				</GroupBox>
+
 			</StackPanel>
 		</Grid>
 	</DockPanel>

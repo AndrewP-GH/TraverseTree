@@ -17,11 +17,25 @@ namespace TraverseTree.Core.Models
 		public bool HasRightOnly =>
 			Left.IsNull() && !Right.IsNull();
 
-		public virtual BinaryTreeNode<TKey, TValue> Left { get; set; }
+		public int Level { get; private set; }
 
-		public virtual BinaryTreeNode<TKey, TValue> Right { get; set; }
+		public int LevelOrder { get; private set; }
 
-		public virtual BinaryTreeNode<TKey, TValue> Parent { get; set; }
+		public BinaryTreeNode<TKey, TValue> Left { get; set; }
+
+		public BinaryTreeNode<TKey, TValue> Right { get; set; }
+
+		public BinaryTreeNode<TKey, TValue> Parent
+		{
+			get { return _parent; }
+			set
+			{
+				_parent = value;
+				Level = _parent.IsNull() ? 0 : ( 1 + _parent.Level );
+				LevelOrder = _parent.IsNull() ? 0 :
+					( _parent.IsLeftChild(this) ? ( _parent.LevelOrder * 2 ) : ( _parent.LevelOrder * 2 + 1 ) );
+			}
+		}
 
 		public BinaryTreeNode<TKey, TValue> Leftmost
 		{
@@ -72,5 +86,7 @@ namespace TraverseTree.Core.Models
 			Right = right;
 			Parent = parent;
 		}
+
+		private BinaryTreeNode<TKey, TValue> _parent;
 	}
 }

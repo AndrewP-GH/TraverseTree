@@ -102,7 +102,7 @@ namespace TraverseTree.Core.Models
 		public void AddRange(IEnumerable<BinaryTreeNode<TKey, TValue>> nodes)
 		{
 			nodes.NullGuard(nameof(nodes));
-			nodes.Each(x => Add(x)).ToArray();
+			nodes.Each(x => Add(x));
 		}
 
 		public IEnumerable<BinaryTreeNode<TKey, TValue>> Find(TKey key) =>
@@ -188,6 +188,9 @@ namespace TraverseTree.Core.Models
 
 		public IEnumerable<BinaryTreeNode<TKey, TValue>> GetEnumerator(TraverseMode mode) =>
 			new IterativeBinaryNodeVisitor<BinaryTreeNode<TKey, TValue>>(Root, mode);
+
+		public IEnumerable<BinaryTreeNode<TKey, TValue>> GetEnumerator(TraverseMode mode, ICollectionDecorator<BinaryTreeNode<TKey, TValue>> decorator) =>
+			new IterativeBinaryNodeVisitor<BinaryTreeNode<TKey, TValue>>(Root, decorator, mode);
 
 		public override string ToString() => $"Count = {Count}";
 

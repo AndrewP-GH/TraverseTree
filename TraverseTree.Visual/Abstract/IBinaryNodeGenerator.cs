@@ -1,11 +1,12 @@
 ﻿using System;
-using TraverseTree.Visual.Models;
+
+using TraverseTree.Core.Models;
 
 namespace TraverseTree.Visual.Abstract
 {
 	public interface IBinaryNodeGenerator<TKey, TValue> where TKey : IComparable<TKey>
 	{
-		VisualBinaryTreeNode<TKey, TValue> CreateNode();
-		VisualBinaryTreeNode<TKey, TValue> CreateNode(TValue value);
+		BinaryTreeNode<TKey, TValue> CreateNode();
+		BinaryTreeNode<TKey, TValue> CreateNode(TValue value);
 	}
 }

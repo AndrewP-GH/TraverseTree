@@ -12,8 +12,15 @@ using TraverseTree.Visual.Models;
 
 namespace TraverseTree.Visual.ViewModels
 {
+	using Node = BinaryTreeNode<int, ViewData>;
+
 	public class StackViewModel : ObservableObject
 	{
+		public ObservableStack<Node> Stack
+		{
+			get { return _stack; }
+		}
+
 		public int MaximumHeight
 		{
 			get { return _maximumHeight; }
@@ -22,8 +29,10 @@ namespace TraverseTree.Visual.ViewModels
 
 		public int ExpectedHeight
 		{
-			get { return _expectedHeight; }
-			set { UpdateValue(ref _expectedHeight, value, nameof(ExpectedHeight)); }
+			get
+			{
+				return (int)Math.Round(Math.Sqrt(Math.PI * MaximumHeight) - 1.5 + 11.0 * Math.Sqrt(Math.PI / MaximumHeight * 1.0) / 24.0 + Math.Sqrt(1.0 / Math.Pow(MaximumHeight, 3)) );
+			}
 		}
 
 		public int ActualHeight
@@ -32,12 +41,10 @@ namespace TraverseTree.Visual.ViewModels
 			set { UpdateValue(ref _actualHeight, value, nameof(ActualHeight)); }
 		}
 
-		public ObservableStack<BinaryTreeNode<int, string>> Collection => _collection;
-
 		public StackViewModel()
 		{
-			_collection = new ObservableStack<BinaryTreeNode<int, string>>();
-			_collection.CollectionChanged += new NotifyCollectionChangedEventHandler(OnTreeTraversal);
+			_stack = new ObservableStack<Node>();
+			_stack.CollectionChanged += new NotifyCollectionChangedEventHandler(OnTreeTraversal);
 		}
 
 		public void OnTreeTraversal (object sender, NotifyCollectionChangedEventArgs args)
@@ -46,23 +53,22 @@ namespace TraverseTree.Visual.ViewModels
 			{
 				if (args.NewItems != null && args.NewItems.Count > 0)
 				{
-					( (VisualBinaryTreeNode<int, string>)args.NewItems[0] ).TreeNodeType = VisualTreeNodeType.InsertedForTraverse;
+					( (Node)args.NewItems[0] ).Value.VisualType = VisualTreeNodeType.InsertedForTraverse;
 				}
 
 			} else if (args.Action == NotifyCollectionChangedAction.Remove)
 			{
 				if (args.OldItems != null && args.OldItems.Count > 0)
 				{
-					( (VisualBinaryTreeNode<int, string>)args.OldItems[0] ).TreeNodeType = VisualTreeNodeType.InsertedToTree;
+					( (Node)args.OldItems[0] ).Value.VisualType = VisualTreeNodeType.InsertedToTree;
 				}
 			}
 
-			ActualHeight = Collection.Count;
+			ActualHeight = _stack.Count;
 		}
 
 		private int _maximumHeight;
-		private int _expectedHeight;
 		private int _actualHeight;
-		private readonly ObservableStack<BinaryTreeNode<int, string>> _collection;
+		private readonly ObservableStack<Node> _stack;
 	}
 }

@@ -6,7 +6,7 @@ namespace TraverseTree.Core.Extensions
 {
 	public static class EnumerableExtenssions
 	{
-		public static IEnumerable<T> Each<T>(this IEnumerable<T> source, Action<T> action)
+		public static void Each<T>(this IEnumerable<T> source, Action<T> action)
 		{
 			source.NullGuard(nameof(source));
 			action.NullGuard(nameof(action));
@@ -14,7 +14,6 @@ namespace TraverseTree.Core.Extensions
 			foreach (var item in source)
 			{
 				action(item);
-				yield return item;
 			}
 		}
 	}
