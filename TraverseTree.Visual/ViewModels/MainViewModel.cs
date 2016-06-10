@@ -70,10 +70,14 @@ namespace TraverseTree.Visual.ViewModels
 
 		private void OnTreeTraverse (object arg)
 		{
-			GetVisitor().Each(node => 
+			Task.Run(() =>
 			{
-				node.Value.VisualType = VisualTreeNodeType.Active;
-				node.Value.VisualType = VisualTreeNodeType.InsertedToTree;
+				GetVisitor().Each(node =>
+				{
+					node.Value.VisualType = VisualTreeNodeType.Active;
+					Thread.Sleep(1000);
+					node.Value.VisualType = VisualTreeNodeType.InsertedToTree;
+				});
 			});
 		}
 
@@ -89,13 +93,15 @@ namespace TraverseTree.Visual.ViewModels
 		private IBinaryNodeGenerator<int, ViewData> GetGenerator()
 		{
 			if (KeyDistributionType == KeyDistributionType.Uniform) {
-				return new FakeGenerator();
+				return new UniformBinaryNodeGenerator();
 			}
 
 			throw new ArgumentException("Invalid argument");
 		}
 
 		private int _maximumCount;
+		private int _treeHeight;
+		private int _expectedHeight;
 		private BinarySearchTree<int, ViewData> _tree = new BinarySearchTree<int, ViewData>();
 	}
 }

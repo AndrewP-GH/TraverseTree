@@ -25,7 +25,7 @@ namespace TraverseTree.Visual.Converters
 					color = Colors.White;
 					break;
 				case VisualTreeNodeType.InsertedForTraverse:
-					color = Colors.YellowGreen;
+					color = Colors.Black;
 					break;
 				case VisualTreeNodeType.Active:
 					color = Colors.MediumVioletRed;

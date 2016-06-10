@@ -29,16 +29,23 @@
 				<DataTemplate DataType="mds:ViewData">
 					<Canvas Background="BlanchedAlmond">
 						<Ellipse Canvas.Left="{Binding Path= PositionX}" Canvas.Top="{Binding Path= PositionY}"
-							 Width="{Binding Path= Diameter}" Height="{Binding Path= Diameter}" Name="Ellipse"
-							 Fill="{Binding Path= VisualType, Converter= {StaticResource TypeToColorConverter}}">
+								 Width="{Binding Path= Diameter}" Height="{Binding Path= Diameter}"
+								 Fill="{Binding Path= VisualType, Converter= {StaticResource TypeToColorConverter}}" StrokeThickness="1">
 							<Ellipse.Style>
-								<Style TargetType="{x:Type Ellipse}">
+								<Style TargetType="Ellipse">
 									<Style.Triggers>
-										<Trigger Property="IsMouseOver" Value="True">
-											<Setter Property="Opacity" Value="0.6" />
-										</Trigger>
-										
-										
+										<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType= ContentPresenter}, Path= Content.VisualType}" Value="Active">
+											<DataTrigger.EnterActions>
+												<BeginStoryboard>
+													<Storyboard>
+														<ColorAnimation Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)" 
+																		To="Blue" Duration="0:0:1.5" AutoReverse="True"/>
+														<DoubleAnimation Storyboard.TargetProperty="StrokeThickness"
+																		 To="3" Duration="0:0:0.5" AutoReverse="True" />
+													</Storyboard>
+												</BeginStoryboard>
+											</DataTrigger.EnterActions>
+										</DataTrigger>
 									</Style.Triggers>
 								</Style>
 							</Ellipse.Style>
