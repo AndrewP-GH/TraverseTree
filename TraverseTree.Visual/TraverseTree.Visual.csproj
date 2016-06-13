@@ -55,13 +55,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Abstract\IActionManager.cs" />
     <Compile Include="Abstract\IBinaryNodeGenerator.cs" />
     <Compile Include="Converters\ColorConverter.cs" />
+    <Compile Include="Interfaces\ActionManager.cs" />
+    <Compile Include="Interfaces\BindableDoubleAnimation.cs" />
     <Compile Include="Models\KeyDistributionType.cs" />
     <Compile Include="Models\ObservableStack.cs" />
     <Compile Include="Models\UniformBinaryNodeGenerator.cs" />
     <Compile Include="Models\VisualTreeNodeType.cs" />
-    <Compile Include="Models\VisualBinaryTreeNode.cs" />
     <Compile Include="Models\ViewData.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="Views\StackView.xaml.cs">

@@ -59,11 +59,11 @@
 				<GroupBox Margin="10 10 10 0" Header="Настройки">
 					<StackPanel>
 						<StackPanel Margin="5">
-							<Label  Content="Выберите распределение ключей: " />
+							<Label  Content="Выберите порядок обхода: " />
 							<ComboBox ItemsSource="{Binding Path=TraversalOrders}" SelectedIndex="0" SelectedValue="{Binding Path= TraverseOrder, Converter= {StaticResource EnumConverter}}" />
 						</StackPanel>
 						<StackPanel Margin="5">
-							<Label  Content="Выберите порядок обхода: " />
+							<Label  Content="Распределение ключей: " />
 							<ComboBox ItemsSource="{Binding Path=KeyDistributions}" SelectedIndex="0" SelectedValue="{Binding Path= KeyDistributionType, Converter= {StaticResource EnumConverter}}"/>
 						</StackPanel>
 						<StackPanel Margin="5">
@@ -77,11 +77,11 @@
 					<StackPanel>
 						<StackPanel Margin="5">
 							<Label  Content="Максимальная высота дерева: " />
-							<TextBlock />
+							<TextBlock Text="{Binding Path= TreeHeight}" />
 						</StackPanel>
 						<StackPanel Margin="5">
 							<Label  Content="Максимальная глубина стека" />
-							<TextBlock />
+							<TextBlock Text="{Binding Path= ExpectedHeight}" />
 						</StackPanel>
 					</StackPanel>
 				</GroupBox>

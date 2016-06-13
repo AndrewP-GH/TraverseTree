@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TraverseTree.Core.Models;
+using TraverseTree.Core.Extensions;
 using TraverseTree.Visual.Abstract;
 using TraverseTree.Visual.Models;
 
@@ -24,7 +25,21 @@ namespace TraverseTree.Visual.ViewModels
 		public int MaximumHeight
 		{
 			get { return _maximumHeight; }
-			set { UpdateValue(ref _maximumHeight, value, nameof(MaximumHeight)); }
+			set
+			{
+				UpdateValue(ref _maximumHeight, value, nameof(MaximumHeight));
+				OnPropertyChanged(nameof(ExpectedWidth));
+			}
+		}
+
+		public int ExpectedWidth
+		{
+			get { return ExpectedHeight * 100; }
+		}
+
+		public int ActualWidth
+		{
+			get { return ActualHeight * 100; }
 		}
 
 		public int ExpectedHeight
@@ -38,37 +53,49 @@ namespace TraverseTree.Visual.ViewModels
 		public int ActualHeight
 		{
 			get { return _actualHeight; }
-			set { UpdateValue(ref _actualHeight, value, nameof(ActualHeight)); }
+			set
+			{
+				UpdateValue(ref _actualHeight, value, nameof(ActualHeight));
+				OnPropertyChanged(nameof(ActualWidth));
+			}
 		}
 
-		public StackViewModel()
+		public StackViewModel(IActionManager manager)
 		{
+			manager.NullGuardAssign(out _manager, nameof(manager));
 			_stack = new ObservableStack<Node>();
 			_stack.CollectionChanged += new NotifyCollectionChangedEventHandler(OnTreeTraversal);
 		}
 
 		public void OnTreeTraversal (object sender, NotifyCollectionChangedEventArgs args)
 		{
+			int count = _stack.Count;
+
 			if (args.Action == NotifyCollectionChangedAction.Add)
 			{
 				if (args.NewItems != null && args.NewItems.Count > 0)
 				{
-					( (Node)args.NewItems[0] ).Value.VisualType = VisualTreeNodeType.InsertedForTraverse;
+					_manager.RegisterAction(() => {
+						ActualHeight = count;
+						( (Node)args.NewItems[0] ).Value.VisualType = VisualTreeNodeType.InsertedForTraverse;
+					});
 				}
 
 			} else if (args.Action == NotifyCollectionChangedAction.Remove)
 			{
 				if (args.OldItems != null && args.OldItems.Count > 0)
 				{
-					( (Node)args.OldItems[0] ).Value.VisualType = VisualTreeNodeType.InsertedToTree;
+					_manager.RegisterAction(() => {
+						ActualHeight = count;
+						( (Node)args.OldItems[0] ).Value.VisualType = VisualTreeNodeType.InsertedToTree;
+					});
 				}
 			}
-
-			ActualHeight = _stack.Count;
 		}
 
 		private int _maximumHeight;
 		private int _actualHeight;
+		private readonly IActionManager _manager;
 		private readonly ObservableStack<Node> _stack;
 	}
 }

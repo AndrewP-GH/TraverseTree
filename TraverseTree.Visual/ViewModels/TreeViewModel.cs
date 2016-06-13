@@ -41,8 +41,9 @@ namespace TraverseTree.Visual.ViewModels
 
 		public ObservableCollection<ViewData> Collection => _nodes;
 
-		public TreeViewModel()
+		public TreeViewModel(IActionManager manager)
 		{
+			manager.NullGuardAssign(out _manager, nameof(manager));
 			_nodes = new ObservableCollection<ViewData>();
 			_nodes.CollectionChanged += new NotifyCollectionChangedEventHandler(OnCollectionChanged);
 		}
@@ -94,18 +95,19 @@ namespace TraverseTree.Visual.ViewModels
 			}
 		}
 
+		public void Clear() => _nodes.Clear();
+
 		protected void OnCollectionChanged (object sender, NotifyCollectionChangedEventArgs args)
 		{
 			if (args.Action == NotifyCollectionChangedAction.Add)
 			{
 				if (args.NewItems != null && args.NewItems.Count > 0)
 				{
-					( (ViewData)args.NewItems[0] ).VisualType = VisualTreeNodeType.InsertedToTree;
+					_manager.RegisterAction(
+						() => ( (ViewData)args.NewItems[0] ).VisualType = VisualTreeNodeType.InsertedToTree
+					);
 				}
-			} else if (args.Action == NotifyCollectionChangedAction.Remove && args.NewItems != null)
-			{
-				
-			}
+			} 
 		}
 
 		private int NodeOffset(int levelDifference) =>
@@ -133,6 +135,7 @@ namespace TraverseTree.Visual.ViewModels
 		private double _scaleX = 1.0;
 		private double _scaleY = 1.0;
 		private const double ScaleRate = 1.1;
+		private readonly IActionManager _manager;
 		private readonly ObservableCollection<ViewData> _nodes;
 	}
 }

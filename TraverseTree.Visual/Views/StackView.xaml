@@ -4,9 +4,32 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:TraverseTree.Visual.Views"
+			 xmlns:ifs="clr-namespace:TraverseTree.Visual.Interfaces"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Background="Red">
-            
+    <Grid Background="Azure">
+		<Border Name="ground" Background="LightBlue" Margin="10" ClipToBounds="True" CornerRadius="15" BorderBrush="Black" BorderThickness="1">
+			<Canvas>
+				<Border Canvas.Top="0" Canvas.Left="0" ClipToBounds="True" BorderThickness="1" BorderBrush="Black" Margin="-1"
+						CornerRadius="15" Background="Yellow" Opacity="0.5" Width="{Binding Path= ExpectedWidth}" 
+						Height="{Binding ElementName=ground, Path=ActualHeight}" >
+				</Border>
+				<Border Canvas.Top="0" Canvas.Left="0" ClipToBounds="True" BorderThickness="1" BorderBrush="Black" Margin="-1"
+						CornerRadius="15" Background="GreenYellow"  Width="{Binding Path= ActualWidth, NotifyOnTargetUpdated=True}" 
+						Height="{Binding ElementName=ground, Path=ActualHeight }">
+					<Border.Triggers>
+						<EventTrigger RoutedEvent="Binding.TargetUpdated">
+							<BeginStoryboard>
+								<Storyboard AutoReverse="True">
+									<ifs:BindableDoubleAnimation Storyboard.TargetProperty="Width" AutoReverse="False" Duration="0:0:0.3"
+																 From="{Binding Path= Width}" 
+																 To="{Binding Path= Width}" />
+								</Storyboard>
+							</BeginStoryboard>
+						</EventTrigger>
+					</Border.Triggers>
+				</Border>
+			</Canvas>
+		</Border>
     </Grid>
 </UserControl>
