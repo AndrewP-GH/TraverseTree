@@ -2,23 +2,25 @@
 
 using TraverseTree.Visual.Abstract;
 using TraverseTree.Core.Models;
+using System.Linq;
 
 namespace TraverseTree.Visual.Models
 {
 	internal sealed class UniformBinaryNodeGenerator : IBinaryNodeGenerator<int, ViewData>
 	{
-		private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
-
 		public BinaryTreeNode<int, ViewData> CreateNode() =>
-			new BinaryTreeNode<int, ViewData>(_random.Next(), new ViewData());
+			new BinaryTreeNode<int, ViewData>(_random.Next(1, MaxRange), new ViewData());
 
 		public BinaryTreeNode<int, ViewData> CreateNode(ViewData data) =>
-			new BinaryTreeNode<int, ViewData>(_random.Next(), data);
+			new BinaryTreeNode<int, ViewData>(_random.Next(1, MaxRange), data);
+
+		private const int MaxRange = 20;
+		private readonly Random _random = new Random(Guid.NewGuid().GetHashCode());
 	}
 
 	internal sealed class FakeGenerator : IBinaryNodeGenerator<int, ViewData>
 	{
-		private readonly int[] _keys = new int[] { 10, 12, 3, 42, 71, 3, 4, 11, 67, 2, 15, 17, 120, 8, 2, 16, 1, 7, 9, 20 };
+		private readonly int[] _keys = Enumerable.Range(-10, 10).Concat(Enumerable.Range(1, 10)).ToArray();
 		private int _active = 0;
 
 		public BinaryTreeNode<int, ViewData> CreateNode() =>

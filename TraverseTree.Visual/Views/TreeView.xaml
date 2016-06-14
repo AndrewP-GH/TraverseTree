@@ -7,6 +7,7 @@
              xmlns:local="clr-namespace:TraverseTree.Visual.Views"
 			 xmlns:cvs="clr-namespace:TraverseTree.Visual.Converters"
              mc:Ignorable="d" 
+			 Background="AliceBlue"
              d:DesignHeight="300" d:DesignWidth="300">
 	<UserControl.Resources>
 		<ResourceDictionary>
@@ -14,11 +15,11 @@
 		</ResourceDictionary>
 	</UserControl.Resources>
 	
-	<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" Background="Aqua">
+	<ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto" >
 		<ItemsControl ItemsSource="{Binding Path= Collection}">
 			<ItemsControl.ItemsPanel>
 				<ItemsPanelTemplate>
-					<Canvas Background="Yellow" Width="{Binding Path= PreferedWidth}" Height="{Binding Path= PreferedHeight}" MouseWheel="OnCanvasMouseWheel">
+					<Canvas Width="{Binding Path= PreferedWidth}" Height="{Binding Path= PreferedHeight}" MouseWheel="OnCanvasMouseWheel">
 						<Canvas.RenderTransform>
 							<ScaleTransform ScaleX="{Binding Path= ScaleX}" ScaleY="{Binding Path= ScaleY}" />
 						</Canvas.RenderTransform>
@@ -34,14 +35,32 @@
 							<Ellipse.Style>
 								<Style TargetType="Ellipse">
 									<Style.Triggers>
-										<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType= ContentPresenter}, Path= Content.VisualType}" Value="Active">
+										<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType= ContentPresenter}, Path= Content.VisualType}" Value="InsertedToTree">
 											<DataTrigger.EnterActions>
 												<BeginStoryboard>
 													<Storyboard>
-														<ColorAnimation Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)" 
-																		To="Blue" Duration="0:0:1.5" AutoReverse="True"/>
-														<DoubleAnimation Storyboard.TargetProperty="StrokeThickness"
-																		 To="3" Duration="0:0:0.5" AutoReverse="True" />
+														<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)">
+															<ColorKeyFrameCollection>
+																<EasingColorKeyFrame KeyTime="0:0:0.0" Value="Green" />
+																<EasingColorKeyFrame KeyTime="0:0:0.3" Value="YellowGreen" />
+																<EasingColorKeyFrame KeyTime="0:0:0.6" Value="Green" />
+															</ColorKeyFrameCollection>
+														</ColorAnimationUsingKeyFrames>
+													</Storyboard>
+												</BeginStoryboard>
+											</DataTrigger.EnterActions>
+										</DataTrigger>
+										<DataTrigger Binding="{Binding RelativeSource={RelativeSource Mode= FindAncestor, AncestorType= ContentPresenter}, Path= Content.VisualType}" Value="InsertedForTraverse">
+											<DataTrigger.EnterActions>
+												<BeginStoryboard>
+													<Storyboard>
+														<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Ellipse.Fill).(SolidColorBrush.Color)">
+															<ColorKeyFrameCollection>
+																<EasingColorKeyFrame KeyTime="0:0:0.0" Value="Red" />
+																<EasingColorKeyFrame KeyTime="0:0:0.3" Value="DarkRed" />
+																<EasingColorKeyFrame KeyTime="0:0:0.6" Value="Red" />
+															</ColorKeyFrameCollection>
+														</ColorAnimationUsingKeyFrames>
 													</Storyboard>
 												</BeginStoryboard>
 											</DataTrigger.EnterActions>
@@ -60,16 +79,6 @@
 							X2="{Binding Path=EndRightEdgeX}" Y2="{Binding Path=EndEdgeY}" 
 							Stroke="Black" StrokeThickness="{Binding Path= RightThickness}" >
 						</Line>
-						<!--<Canvas.Resources>
-							<Storyboard x:Key="ColorAnimation" Name="SbColor">
-								<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush).Color" Storyboard.TargetName="Ellipse" RepeatBehavior="Forever" >
-									<EasingColorKeyFrame KeyTime="0" Value="Red"/>
-									<EasingColorKeyFrame KeyTime="0:0:1" Value="#FFFFCA00"/>
-									<EasingColorKeyFrame KeyTime="0:0:2" Value="#FF0082FF"/>
-									<EasingColorKeyFrame KeyTime="0:0:3" Value="#FF18FF00"/>
-								</ColorAnimationUsingKeyFrames>
-							</Storyboard>
-						</Canvas.Resources>-->
 					</Canvas>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
