@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 using TraverseTree.Core.Models;
 using TraverseTree.Core.Extensions;
 using TraverseTree.Visual.Abstract;
@@ -28,18 +24,8 @@ namespace TraverseTree.Visual.ViewModels
 			set
 			{
 				UpdateValue(ref _maximumHeight, value, nameof(MaximumHeight));
-				OnPropertyChanged(nameof(ExpectedWidth));
+				OnPropertyChanged(nameof(ExpectedHeight));
 			}
-		}
-
-		public int ExpectedWidth
-		{
-			get { return ExpectedHeight * 100; }
-		}
-
-		public int ActualWidth
-		{
-			get { return ActualHeight * 100; }
 		}
 
 		public int ExpectedHeight
@@ -56,7 +42,6 @@ namespace TraverseTree.Visual.ViewModels
 			set
 			{
 				UpdateValue(ref _actualHeight, value, nameof(ActualHeight));
-				OnPropertyChanged(nameof(ActualWidth));
 			}
 		}
 

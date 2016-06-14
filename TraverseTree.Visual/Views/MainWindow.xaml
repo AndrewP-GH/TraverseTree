@@ -80,7 +80,7 @@
 							<TextBlock Text="{Binding Path= TreeHeight}" />
 						</StackPanel>
 						<StackPanel Margin="5">
-							<Label  Content="Максимальная глубина стека" />
+							<Label  Content="Оценка на глубину стека" />
 							<TextBlock Text="{Binding Path= ExpectedHeight}" />
 						</StackPanel>
 					</StackPanel>

@@ -65,7 +65,6 @@
 												</BeginStoryboard>
 											</DataTrigger.EnterActions>
 										</DataTrigger>
-
 									</Style.Triggers>
 								</Style>
 							</Ellipse.Style>
@@ -80,16 +79,6 @@
 							X2="{Binding Path=EndRightEdgeX}" Y2="{Binding Path=EndEdgeY}" 
 							Stroke="Black" StrokeThickness="{Binding Path= RightThickness}" >
 						</Line>
-						<!--<Canvas.Resources>
-							<Storyboard x:Key="ColorAnimation" Name="SbColor">
-								<ColorAnimationUsingKeyFrames Storyboard.TargetProperty="(Shape.Fill).(SolidColorBrush).Color" Storyboard.TargetName="Ellipse" RepeatBehavior="Forever" >
-									<EasingColorKeyFrame KeyTime="0" Value="Red"/>
-									<EasingColorKeyFrame KeyTime="0:0:1" Value="#FFFFCA00"/>
-									<EasingColorKeyFrame KeyTime="0:0:2" Value="#FF0082FF"/>
-									<EasingColorKeyFrame KeyTime="0:0:3" Value="#FF18FF00"/>
-								</ColorAnimationUsingKeyFrames>
-							</Storyboard>
-						</Canvas.Resources>-->
 					</Canvas>
 				</DataTemplate>
 			</ItemsControl.ItemTemplate>
