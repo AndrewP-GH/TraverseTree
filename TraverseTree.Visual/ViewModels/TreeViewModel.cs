@@ -41,9 +41,8 @@ namespace TraverseTree.Visual.ViewModels
 
 		public ObservableCollection<ViewData> Collection => _nodes;
 
-		public TreeViewModel(IActionManager manager)
+		public TreeViewModel()
 		{
-			manager.NullGuardAssign(out _manager, nameof(manager));
 			_nodes = new ObservableCollection<ViewData>();
 			_nodes.CollectionChanged += new NotifyCollectionChangedEventHandler(OnCollectionChanged);
 		}
@@ -103,9 +102,7 @@ namespace TraverseTree.Visual.ViewModels
 			{
 				if (args.NewItems != null && args.NewItems.Count > 0)
 				{
-					_manager.RegisterAction(
-						() => ( (ViewData)args.NewItems[0] ).VisualType = VisualTreeNodeType.InsertedToTree
-					);
+					((ViewData)args.NewItems[0] ).VisualType = VisualTreeNodeType.InsertedToTree;
 				}
 			} 
 		}
@@ -135,7 +132,6 @@ namespace TraverseTree.Visual.ViewModels
 		private double _scaleX = 1.0;
 		private double _scaleY = 1.0;
 		private const double ScaleRate = 1.1;
-		private readonly IActionManager _manager;
 		private readonly ObservableCollection<ViewData> _nodes;
 	}
 }

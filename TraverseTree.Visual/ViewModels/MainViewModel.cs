@@ -10,6 +10,7 @@ using TraverseTree.Visual.Interfaces;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Windows.Threading;
 
 namespace TraverseTree.Visual.ViewModels
 {
@@ -64,18 +65,25 @@ namespace TraverseTree.Visual.ViewModels
 			TraverseOrder = TraverseMode.Inorder;
 			KeyDistributionType = KeyDistributionType.Uniform;
 
-			TreeViewModel = new TreeViewModel(_manager);
-			StackViewModel = new StackViewModel(_manager);
+			TreeViewModel = new TreeViewModel();
+			StackViewModel = new StackViewModel();
+
+			_timer = new DispatcherTimer(DispatcherPriority.Render)
+			{
+				Interval = TimeSpan.FromMilliseconds(600),
+				IsEnabled = false
+			};
+			_timer.Tick += OnTimerTick;
 		}
 
 		private bool OnValidateStartTreeTraverse(object obj) =>
-			_tree.Count == _maximumCount && !_manager.Executing;
+			_tree.Count == _maximumCount && !_timer.IsEnabled;
 
 		private bool OnValidateTreeGeneration(object arg = null)
 		{
 			return Int32.TryParse(MaximumCount, out _maximumCount) && 
 				_maximumCount > 0 && _maximumCount < 10000 && 
-				!_manager.Executing;
+				!_timer.IsEnabled;
 		}
 			
 		private void OnTreeGeneration (object arg = null)
@@ -94,16 +102,24 @@ namespace TraverseTree.Visual.ViewModels
 
 		private void OnStartTreeTraverse (object arg)
 		{
-			Visitor.Each(node =>
-			{
-				_manager.RegisterAction(() => node.Value.VisualType = VisualTreeNodeType.Active);
-				_manager.RegisterAction(() => node.Value.VisualType = VisualTreeNodeType.InsertedToTree);
-			});
-			_manager.StartExecutingActions();
+			_iterator = Visitor.GetEnumerator();
+			_timer.Start();
 		}
 
-		private void OnStopTreeTraverse (object arg) =>
-			_manager.StopExecutingActions();
+		private void OnStopTreeTraverse(object arg) =>
+			_timer.Stop();
+
+		private void OnTimerTick(object sender, EventArgs args)
+		{
+			if (_iterator.MoveNext())
+			{
+				_iterator.Current.Value.VisualType = VisualTreeNodeType.Active;
+				_iterator.Current.Value.VisualType = VisualTreeNodeType.InsertedToTree;
+			} else
+			{
+				_timer.Stop();
+			}
+		}
 
 		private void Clear()
 		{
@@ -128,7 +144,8 @@ namespace TraverseTree.Visual.ViewModels
 		
 		private int _maximumCount;
 		private int _treeHeight;
-		private ActionManager _manager = new ActionManager();
+		private DispatcherTimer _timer = new DispatcherTimer();
+		private IEnumerator<BinaryTreeNode<int, ViewData>> _iterator;
 		private BinarySearchTree<int, ViewData> _tree = new BinarySearchTree<int, ViewData>();
 	}
 }

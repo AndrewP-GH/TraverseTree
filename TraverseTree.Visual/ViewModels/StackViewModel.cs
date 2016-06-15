@@ -45,42 +45,34 @@ namespace TraverseTree.Visual.ViewModels
 			}
 		}
 
-		public StackViewModel(IActionManager manager)
+		public StackViewModel()
 		{
-			manager.NullGuardAssign(out _manager, nameof(manager));
 			_stack = new ObservableStack<Node>();
 			_stack.CollectionChanged += new NotifyCollectionChangedEventHandler(OnTreeTraversal);
 		}
 
 		public void OnTreeTraversal (object sender, NotifyCollectionChangedEventArgs args)
 		{
-			int count = _stack.Count;
-
 			if (args.Action == NotifyCollectionChangedAction.Add)
 			{
 				if (args.NewItems != null && args.NewItems.Count > 0)
 				{
-					_manager.RegisterAction(() => {
-						ActualHeight = count;
-						( (Node)args.NewItems[0] ).Value.VisualType = VisualTreeNodeType.InsertedForTraverse;
-					});
+					( (Node)args.NewItems[0] ).Value.VisualType = VisualTreeNodeType.InsertedForTraverse;
 				}
 
 			} else if (args.Action == NotifyCollectionChangedAction.Remove)
 			{
 				if (args.OldItems != null && args.OldItems.Count > 0)
 				{
-					_manager.RegisterAction(() => {
-						ActualHeight = count;
-						( (Node)args.OldItems[0] ).Value.VisualType = VisualTreeNodeType.InsertedToTree;
-					});
+					( (Node)args.OldItems[0] ).Value.VisualType = VisualTreeNodeType.InsertedToTree;
 				}
 			}
+
+			ActualHeight = _stack.Count;
 		}
 
 		private int _maximumHeight;
 		private int _actualHeight;
-		private readonly IActionManager _manager;
 		private readonly ObservableStack<Node> _stack;
 	}
 }

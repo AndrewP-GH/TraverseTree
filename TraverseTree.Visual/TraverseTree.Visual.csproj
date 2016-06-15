@@ -55,11 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Abstract\IActionManager.cs" />
     <Compile Include="Abstract\IBinaryNodeGenerator.cs" />
     <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\WidthConverter.cs" />
-    <Compile Include="Interfaces\ActionManager.cs" />
     <Compile Include="Interfaces\BindableDoubleAnimation.cs" />
     <Compile Include="Models\KeyDistributionType.cs" />
     <Compile Include="Models\ObservableStack.cs" />
